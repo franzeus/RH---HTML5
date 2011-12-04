@@ -1,0 +1,37 @@
+body {  
+	background:#111111;
+}
+
+canvas {
+	background:#FFFFFF;	
+}
+
+.rhFont {
+  font-family: 'Luckiest Guy', cursive;
+  color:#B0C081;
+  text-shadow: 1px 1px 1px #8C724D;
+}
+
+#highscore {
+  background:url(../assets/score_bg.png) left no-repeat;
+  position:absolute;
+  width:99px; height:25px;
+  top:20px;
+  left:20px;
+  z-index:999;
+  text-align:center;
+  font-size:1.2em;
+}
+
+
+.button {
+  cursor:pointer;
+  padding-top:14px;
+  display:none;
+  background:url(../assets/button_bg.png) left no-repeat;
+  position:absolute;
+  width:150px; height:38px;
+  z-index:999;
+  text-align:center;
+  font-size:1.2em;
+}
