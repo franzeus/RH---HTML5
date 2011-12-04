@@ -1,7 +1,7 @@
 var PlatformManager = {
 
   platforms: [],
-  randomWidth: [100, 150, 200, 250, 300],
+  randomWidth: [96, 144, 192, 256, 304],
   randomHeight: [20, 40, 60, 80, 100],
   GAP: 90,
   currentPlatformIndex: 0,
@@ -65,7 +65,7 @@ var PlatformManager = {
     PlatformManager.platforms[_index].setBars();
   },
 
-  getRandomNum : function(min, max){
+  getRandomNum : function(min, max) {
     if( min > max )
       return( -1 );
     if( min == max )

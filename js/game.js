@@ -19,6 +19,15 @@ window.requestAnimFrame = (function(){
           });
 })();
 
+window.cancelRequestAnimFrame = ( function() {
+    return window.cancelAnimationFrame          ||
+        window.webkitCancelRequestAnimationFrame    ||
+        window.mozCancelRequestAnimationFrame       ||
+        window.oCancelRequestAnimationFrame     ||
+        window.msCancelRequestAnimationFrame        ||
+        clearTimeout
+} )();
+
 var Game = {
 
   drawInterval: null,
@@ -28,8 +37,9 @@ var Game = {
   buffer: null,
   context: null,
   _canvasContext: null,
-  speed: 3,
+  speed: 2,
   isDrawing: true,
+  reqAnimation: null,
 
   init : function() {
     Game.canvas = document.getElementById("canvas");
@@ -55,16 +65,16 @@ var Game = {
   },
 
   start : function() {
-    requestAnimFrame( Game.start );
+    Game.reqAnimation = requestAnimFrame( Game.start );
     Game.draw();
   },
 
   stop : function() {
     $('#restartButton').show();
     Game.isDrawing = false;
-    console.log(Game.isDrawing)
     Game.speed = 0;
     Player.isVisible = false;
+    cancelRequestAnimFrame(Game.reqAnimation);
   },
 
   clear : function() {
@@ -91,8 +101,6 @@ var Game = {
       if(Player.isFalling) Player.checkFall();
       Game.checkPlayer();
       Player.draw();
-      
-      //Game.water.draw();
 
       Game.speed += 0.002;
       // ---------
@@ -152,7 +160,7 @@ var Game = {
     // Reset game object
     Game.clear();
     Game.isDrawing = true;
-    Game.speed = 3;
+    Game.speed = 2;
     // Reset objects
     Player.reset();
     PlatformManager.reset();
@@ -164,8 +172,7 @@ var Game = {
   },
   
   keyEvent : function(e) {
-    console.log(e.keyCode);
-
+    //console.log(e.keyCode);
     // Space = 32
     // ArrowUp = 38
     // R = 82
@@ -173,8 +180,7 @@ var Game = {
       case(38): Player.jump(); break;
       case(32): Player.jump(); break;
       case(82): Game.reset(); break;
-    }
-      
+    }      
   }
 };
 
