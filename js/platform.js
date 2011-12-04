@@ -76,7 +76,7 @@ var PlatformManager = {
 
 // --------------------------------------------
 var Platform = function(_x, _y, _w, _h) {
-  this.context = Game.context;
+  this.context = Game._canvasContext;
   this.width = _w;
   this.height = _h;
   //this.src = _src;
@@ -103,10 +103,10 @@ Platform.prototype.draw = function() {
   //this.shape.draw();
   var that = this;
   this.bars.forEach(function(bar, index) {
-    bar.draw();
+    if(bar.x < Game.canvas.width)
+      bar.draw();
     bar.x = that.shape.x + (index * bar.width);
     bar.y = that.shape.y;
-   // console.log(that.shape.x, bar.x)
   });
 };
 //

@@ -9,7 +9,7 @@
 */
 //
 window.requestAnimFrame = (function(){
-  return  (window.requestAnimationFrame       || 
+  return  (window.requestAnimationFrame      || 
           window.webkitRequestAnimationFrame || 
           window.mozRequestAnimationFrame    || 
           window.oRequestAnimationFrame      || 
@@ -21,10 +21,10 @@ window.requestAnimFrame = (function(){
 
 window.cancelRequestAnimFrame = ( function() {
     return window.cancelAnimationFrame          ||
-        window.webkitCancelRequestAnimationFrame    ||
-        window.mozCancelRequestAnimationFrame       ||
+        window.webkitCancelRequestAnimationFrame||
+        window.mozCancelRequestAnimationFrame   ||
         window.oCancelRequestAnimationFrame     ||
-        window.msCancelRequestAnimationFrame        ||
+        window.msCancelRequestAnimationFrame    ||
         clearTimeout
 } )();
 
@@ -50,9 +50,9 @@ var Game = {
     Game.WIDTH = Game.canvas.width;
 
     Game.backgrounds = [];
-    Game.backgrounds.push(new Parallax(0, 0, 800, 400, "assets/game_background_layer_3.png", 0.01));
-    Game.backgrounds.push(new Parallax(0, 0,800, 400, "assets/game_background_layer_2.png", 0.1));
-    Game.backgrounds.push(new Parallax(0, 0,800, 400, "assets/game_background_layer_1.png", 0.15));
+    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
+    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_2.png", 0.1));
+    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_1.png", 0.15));
 
     Player.init();
     PlatformManager.createPlatforms(5);
@@ -64,7 +64,7 @@ var Game = {
     Game.isDrawing = true;
   },
 
-  start : function() {
+  start : function() {    
     Game.reqAnimation = requestAnimFrame( Game.start );
     Game.draw();
   },
@@ -88,7 +88,7 @@ var Game = {
       Highscore.addPoint(1);
 
       // ---------
-      // Drawing Backgrounds    
+      // Drawing Backgrounds     
       Game.backgrounds.forEach(function(background){
         background.draw();
       });
