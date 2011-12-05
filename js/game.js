@@ -97,8 +97,9 @@ var Game = {
       PlatformManager.draw();
 
       // Player
-      if(Player.isJumping) Player.checkJump();
-      if(Player.isFalling) Player.checkFall();
+      //Player.checkJump();
+      if(Player.isJumping || Player.isFalling) Player.checkJump();
+      //if(Player.isFalling) Player.checkFall();
       Game.checkPlayer();
       Player.draw();
 
