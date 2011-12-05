@@ -76,7 +76,7 @@ var PlatformManager = {
 
 // --------------------------------------------
 var Platform = function(_x, _y, _w, _h) {
-  this.context = Game._canvasContext;
+  this.context = Game.buffer_context;
   this.width = _w;
   this.height = _h;
   //this.src = _src;
@@ -89,7 +89,7 @@ var Platform = function(_x, _y, _w, _h) {
     x: _x, y: _y,
     width: _w, height: _h,
     color: '#6B421E',
-    context: Game.context
+    context: Game.buffer_context
   });
 
   // Bar

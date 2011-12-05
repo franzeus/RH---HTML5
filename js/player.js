@@ -30,7 +30,7 @@ var Player = {
     Player.shape = new ImageSprite({
       x: Player.x, y: Player.y,
       width: Player.width, height: Player.height,
-      context: Game._canvasContext,
+      context: Game.buffer_context,
       src: 'assets/dinoSprite_48.png',
       frames: 7
     });

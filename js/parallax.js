@@ -1,5 +1,5 @@
 var Parallax = function(_x, _y, _w, _h, _src, _moveSpeed) {
-	this.context = Game._canvasContext;
+	this.context = Game.buffer_context;
 	this.width = _w;
 	this.height = _h;
 	this.src = _src;

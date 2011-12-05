@@ -4,7 +4,6 @@
     - Bonus Points    
   @Feature:
     - Highscore with localstorage
-    - Improve jump animation
     - Improve performance
 */
 //
@@ -45,16 +44,21 @@ var Game = {
     Game.canvas = document.getElementById("canvas");
     Game.buffer = document.getElementById("buffer-canvas");
     Game.context = Game.canvas.getContext("2d");
-    Game._canvasContext = Game.buffer.getContext("2d");
+    Game.buffer_context = Game.buffer.getContext("2d");
+
     Game.HEIGHT = Game.canvas.height;
     Game.WIDTH = Game.canvas.width;
+    Game.buffer.width = Game.canvas.width;
+    Game.buffer.height = Game.canvas.height;
 
+    // Add backgrounds
     Game.backgrounds = [];
     Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
     Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_2.png", 0.1));
     Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_1.png", 0.15));
-
+    // Prepare player
     Player.init();
+    // Create Platforms
     PlatformManager.createPlatforms(5);
 
     // Events
@@ -78,11 +82,11 @@ var Game = {
   },
 
   clear : function() {
-    Game.context.clearRect (0, 0, Game.WIDTH, Game.HEIGHT );
+    Game.buffer_context.clearRect(0, 0, Game.WIDTH, Game.HEIGHT );
     Game.canvas.width = Game.canvas.width;
   },
 
-  draw : function() {
+  draw : function() { 
     if(Game.isDrawing) {
       Game.clear();
       Highscore.addPoint(1);
@@ -92,14 +96,11 @@ var Game = {
       Game.backgrounds.forEach(function(background){
         background.draw();
       });
-      
+
       // Drawing platforms
       PlatformManager.draw();
 
       // Player
-      //Player.checkJump();
-      if(Player.isJumping || Player.isFalling) Player.checkJump();
-      //if(Player.isFalling) Player.checkFall();
       Game.checkPlayer();
       Player.draw();
 
@@ -115,6 +116,10 @@ var Game = {
       Game.stop();
       return false;
     }    
+
+    // Check Jump
+    if(Player.isJumping || Player.isFalling) 
+      Player.checkJump();
 
     // Check collision with platforms
     PlatformManager.platforms.forEach(function(e, ind) {
