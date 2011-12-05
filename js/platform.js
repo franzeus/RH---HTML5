@@ -97,17 +97,29 @@ var Platform = function(_x, _y, _w, _h) {
   this.barWidth = 16; 
   this.barHeight = 165;  
   this.setBars();
+  //
+  this.items = [];
+  this.setItem();
 };
 //
 Platform.prototype.draw = function() {
   //this.shape.draw();
   var that = this;
   this.bars.forEach(function(bar, index) {
-    if(bar.x < Game.canvas.width)
+    if(bar.x < Game.canvas.width) {
       bar.draw();
+    }
     bar.x = that.shape.x + (index * bar.width);
     bar.y = that.shape.y;
   });
+
+  if(that.shape.x + that.shape.width > 0 && that.shape.x < Game.canvas.width) {
+    this.items.forEach(function(item, ind){
+      item.draw();
+      item.shape.x = that.shape.x + item.offsetX;
+      item.shape.y = that.shape.y - item.offsetY;
+    });
+  }
 };
 //
 Platform.prototype.setBars = function() {
@@ -126,3 +138,43 @@ Platform.prototype.setBars = function() {
     this.bars.push(bar);
   }
 };
+//
+Platform.prototype.setItem = function() {
+  //this.items = [];
+
+  var probabilityToHaveItem = PlatformManager.getRandomNum(0,10);
+  // Add item ?
+  //if(probabilityToHaveItem > 0) {
+    console.log(this.shape.x, this.shape.x + this.width)
+    var randomX = PlatformManager.getRandomNum(this.shape.x, this.shape.x + this.width);
+    var randomY = PlatformManager.getRandomNum(16, 30);
+    //console.log(randomX, randomY)
+    this.items.push(new Item(this.shape.x, this.shape.y, randomX, randomY, 16, 16));
+  //}
+};
+
+
+// Obstacle or Bonus Item
+var Item = function(_x, _y, _oX, _oY, _w, _h) {
+  this.context = Game.buffer_context;
+  this.width = _w;
+  this.height = _h;
+  this.src = null;
+  this.x = _x;
+  this.y = _y;
+  this.offsetX = _oX;
+  this.offsetY = _oY;
+  console.log(this.offsetX, this.offsetY);
+  this.isVisible = true;
+  //console.log(this.x, this.y)
+  this.shape = new ImageShape({
+    x: this.x, y: this.y,
+    width: this.width, height: this.height,
+    src: 'assets/goody.png',
+    context: this.context
+  });
+};
+Item.prototype.draw = function() {
+  if(this.isVisible)
+    this.shape.draw();
+}
