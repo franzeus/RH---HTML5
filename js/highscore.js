@@ -42,11 +42,10 @@ var Highscore = {
   },
 
   drawMarkers : function() {
-    Highscore.markers.forEach(function(marker) {      
+    Highscore.markers.forEach(function(marker) {
       if(marker.shape.x > 0) {
-        if(marker.shape.x < Game.WIDTH) {
-          marker.shape.draw();
-        }
+        if(marker.shape.x < Game.WIDTH)
+          marker.draw();      
         marker.update();
       }
     });
@@ -57,6 +56,9 @@ var Highscore = {
   }
 };
 
+
+// ---------------------------------
+// Marker Class
 var Marker = function(_score, _offset) {
   this.score = _score;
   this.offset = _offset + 200;
@@ -70,6 +72,11 @@ var Marker = function(_score, _offset) {
       lineWidth: 4
   });
 };
+//
+Marker.prototype.draw = function() {
+  this.shape.draw();
+};
+//
 Marker.prototype.update = function() {
   this.shape.x -= Game.speed;
   this.shape.endX -= Game.speed;
