@@ -6,19 +6,16 @@ var Player = {
   height: 48,
   shape: null,
   isVisible: true,
+  // Jump
   isJumping: false,
   isFalling: true,
   lastY: 0,
   groundY:0,
-
-  maxJumpHeight: 100,
-  jumpSpeed: 300,
-  fallSpeed: 120,
-
+  maxJumpHeight: 80,
   velocity: 0,
   reachedPeak: false,
-  velocityDownfallSpeed: 18,
-  velocityMax: 2,
+  velocityDownfallSpeed: 4,
+  velocityMax: 0,
 
   init : function() {
     Player.lastY = this.y;
@@ -60,19 +57,10 @@ var Player = {
   },
 
   checkJump : function() {
-  /*if(Player.shape.y <= Player.lastY - Player.maxJumpHeight) {
-      Player.isJumping = false;
-      Player.isFalling = true;
-      return false;
-    }
-    // Fall
-    Player.shape.y -= Player.jumpSpeed;
-
-    */
     // Player jumps
     if(Player.isJumping && !Player.reachedPeak) {
      
-      Player.velocity -= 2.5 * (Player.maxJumpHeight - (Player.shape.y - Player.lastY)) / 100;
+      Player.velocity -= 12.5 * (Player.maxJumpHeight - (Player.shape.y - Player.lastY)) / 10;
 
       if(Player.shape.y <= Player.lastY - Player.maxJumpHeight) {
         Player.reachedPeak = true;

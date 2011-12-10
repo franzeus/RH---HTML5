@@ -1,5 +1,12 @@
 var Highscore = {
   score: 0,
+  domObj: $("#highscore"),
+  scoreDom: $("#highscore").find('#score'),
+
+  init : function() {
+    
+
+  },
 
   reset : function() {
     Highscore.score = 0;
@@ -7,11 +14,16 @@ var Highscore = {
   },
 
   addPoint : function(_value) {
+    if(!_value) return false;
     Highscore.score += _value;
     Highscore.showScore();
   },
 
   showScore : function() {
-    $("#highscore").html(Highscore.score);
+    Highscore.scoreDom.html(Highscore.score);
   },
+
+  blink : function() {
+    Highscore.domObj.fadeOut().fadeIn();
+  }
 };

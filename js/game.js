@@ -5,6 +5,7 @@
   @Feature:
     - Highscore with localstorage
     - Improve performance
+      - Save every possible platform size as image
 */
 //
 window.requestAnimFrame = (function(){
@@ -36,9 +37,10 @@ var Game = {
   buffer: null,
   context: null,
   _canvasContext: null,
-  speed: 2,
+  speed: 4,
   isDrawing: true,
   reqAnimation: null,
+
 
   init : function() {
     Game.canvas = document.getElementById("canvas");
@@ -53,13 +55,13 @@ var Game = {
 
     // Add backgrounds
     Game.backgrounds = [];
-    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
-    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_2.png", 0.1));
-    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_1.png", 0.15));
+    //Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
+    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_2.png", 0.1));
+    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_1.png", 0.15));
     // Prepare player
     Player.init();
     // Create Platforms
-    PlatformManager.createPlatforms(5);
+    PlatformManager.createPlatforms(3);
 
     // Events
     $(document).keydown($.proxy(Game.keyEvent, this));
@@ -69,7 +71,6 @@ var Game = {
   },
 
   start : function() {    
-    Game.reqAnimation = requestAnimFrame( Game.start );
     Game.draw();
   },
 
@@ -82,17 +83,19 @@ var Game = {
   },
 
   clear : function() {
-    Game.buffer_context.clearRect(0, 0, Game.WIDTH, Game.HEIGHT );
+    //Game.buffer_context.clearRect(0, 0, Game.WIDTH, Game.HEIGHT );
+    Game.buffer.width = Game.buffer.width;
     Game.canvas.width = Game.canvas.width;
   },
 
   draw : function() { 
+   
     if(Game.isDrawing) {
       Game.clear();
       Highscore.addPoint(1);
 
       // ---------
-      // Drawing Backgrounds     
+      // Drawing Backgrounds      
       Game.backgrounds.forEach(function(background){
         background.draw();
       });
@@ -107,6 +110,9 @@ var Game = {
       Game.speed += 0.002;
       // ---------
       Game.context.drawImage(Game.buffer, 0, 0);
+      Game.reqAnimation = requestAnimFrame( Game.draw );
+    } else {
+      Game.canvasToBW();
     }
   },
 
@@ -128,6 +134,16 @@ var Game = {
         PlatformManager.currentPlatformIndex = ind;
         PlatformManager.nextPlattformIndex = (ind == PlatformManager.platforms.length - 1) ? 0 : ind+1;
       }
+    
+      // Collision with platform item
+      e.items.forEach(function(item) {
+        if(!item.isVisible) return false;
+        if(Game.isColliding(item.shape, Player.shape) ) {
+          item.collide();
+          Highscore.addPoint(item.points);
+          Highscore.blink();
+        }
+      });
 
       var nextShape = PlatformManager.platforms[PlatformManager.nextPlattformIndex].shape;
       var currentShape = PlatformManager.platforms[PlatformManager.currentPlatformIndex].shape ;
@@ -176,6 +192,27 @@ var Game = {
     // Start
     Game.start();
   },
+
+  canvasToBW : function () {
+
+    var imgd = Game.buffer_context.getImageData(0, 0, Game.WIDTH, Game.HEIGHT);
+    var pix = imgd.data;
+    for (var i = 0, n = pix.length; i < n; i += 4) {
+      var grayscale = pix[i  ] * .3 + pix[i+1] * .59 + pix[i+2] * .11;
+      pix[i  ] = grayscale;   // red
+      pix[i+1] = grayscale;   // green
+      pix[i+2] = grayscale;   // blue
+      // alpha
+    }
+
+    // Draw Background Rect
+    Game.buffer_context.fillStyle = 'rgb(0,0,0)';
+    Game.buffer_context.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
+    Game.context.drawImage(Game.buffer, 0, 0);
+    
+    Game.buffer_context.putImageData(imgd, 0, 0);
+    Game.context.drawImage(Game.buffer, 0, 0);
+  },
   
   keyEvent : function(e) {
     //console.log(e.keyCode);
@@ -185,7 +222,7 @@ var Game = {
     switch(e.keyCode) {
       case(38): Player.jump(); break;
       case(32): Player.jump(); break;
-      case(82): Game.reset(); break;
+      case(82): if(!Game.isDrawing) Game.reset(); break;
     }      
   }
 };

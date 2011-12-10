@@ -31,9 +31,8 @@ Parallax.prototype.update = function(i) {
 	this.plains[i].x -= this.moveSpeed * Game.speed;
 
 	if(this.plains[i].x + this.plains[i].width <= 0) {
-		if(i == 0)
-			this.plains[i].x = this.plains[this.plains.length-1].x + this.width;
-		else
-			this.plains[i].x = this.plains[i-1].x + this.width;
+		this.plains[i].x = i == 0 
+			? this.plains[i].x = this.plains[this.plains.length-1].x + this.width 
+			: this.plains[i].x = this.plains[i-1].x + this.width;
 	}
 };
