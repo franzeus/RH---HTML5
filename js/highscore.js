@@ -29,7 +29,16 @@ var Highscore = {
   },
 
   saveScore : function() {
-    Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
+    // Only save highest score
+    if(Highscore.markers.length > 0) {
+      var highscore = Highscore.markers[0];
+      if(highscore.score < Highscore.score) {
+        Highscore.markers = [];
+        Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
+      }
+    } else {
+      Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
+    }
   },
 
   drawMarkers : function() {
