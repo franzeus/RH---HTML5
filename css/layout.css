@@ -9,6 +9,10 @@ a, a:visited {
   color:#999999;
 }
 
+h1 {
+  margin:0;
+}
+
 canvas {
   /*position:absolute;*/
   position:relative;
@@ -69,7 +73,7 @@ canvas {
 }
 
 #slideInfo .content {
-  margin:30px 0 0 80px;
+  margin:40px 0 0 100px;
 }
 
 #footer {
@@ -78,8 +82,12 @@ canvas {
   margin:auto;
 }
 
-#nextButton {
+#nextButton, #prevButton  { 
+  cursor:pointer;
   position:absolute;
+}
+
+#nextButton {
   right:0px; bottom:80px;
 }
 

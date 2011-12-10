@@ -28,7 +28,7 @@ var PlatformManager = {
 
   reset : function() {
     PlatformManager.platforms = [];
-    PlatformManager.createPlatforms(5);
+    PlatformManager.createPlatforms(3);
   },
 
   draw : function() {
@@ -50,7 +50,7 @@ var PlatformManager = {
     }
   },
 
-  transform : function(_index) {    
+  transform : function(_index) {
     var nextIndex = _index - 1;
     if(_index == 0)
       nextIndex = PlatformManager.platforms.length - 1;
@@ -151,6 +151,6 @@ Platform.prototype.setItem = function() {
   if(probabilityToHaveItem > 8) {
     var randomX = PlatformManager.getRandomNum(5, this.shape.width);
     var randomY = PlatformManager.getRandomNum(16, this.shape.height);  
-    this.items.push(new Item(this.shape.x, this.shape.y, randomX, randomY));
+    this.items.push(new Goody(this.shape.x, this.shape.y, randomX, randomY));
   }
 };

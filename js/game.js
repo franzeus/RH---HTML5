@@ -40,7 +40,7 @@ var Game = {
   speed: 4,
   isDrawing: true,
   reqAnimation: null,
-
+  acceleration: 0,
 
   init : function() {
     Game.canvas = document.getElementById("canvas");
@@ -63,6 +63,9 @@ var Game = {
     // Create Platforms
     PlatformManager.createPlatforms(3);
 
+    Game.acceleration = 0.002;
+    Game.markerPoint = 100;
+
     // Events
     $(document).keydown($.proxy(Game.keyEvent, this));
     $('#canvas').click(function(){ Player.jump() });
@@ -80,10 +83,10 @@ var Game = {
     Game.speed = 0;
     Player.isVisible = false;
     cancelRequestAnimFrame(Game.reqAnimation);
+    Highscore.saveScore();
   },
 
   clear : function() {
-    //Game.buffer_context.clearRect(0, 0, Game.WIDTH, Game.HEIGHT );
     Game.buffer.width = Game.buffer.width;
     Game.canvas.width = Game.canvas.width;
   },
@@ -100,6 +103,9 @@ var Game = {
         background.draw();
       });
 
+      // Markers
+      Highscore.drawMarkers();
+
       // Drawing platforms
       PlatformManager.draw();
 
@@ -107,7 +113,8 @@ var Game = {
       Game.checkPlayer();
       Player.draw();
 
-      Game.speed += 0.002;
+      Game.speed += Game.acceleration;
+      Game.markerPoint -= Game.speed;
       // ---------
       Game.context.drawImage(Game.buffer, 0, 0);
       Game.reqAnimation = requestAnimFrame( Game.draw );
@@ -121,7 +128,7 @@ var Game = {
     if(Player.shape.y + Player.shape.height >= Game.HEIGHT) {
       Game.stop();
       return false;
-    }    
+    }
 
     // Check Jump
     if(Player.isJumping || Player.isFalling) 
@@ -189,6 +196,8 @@ var Game = {
     Highscore.reset();
     // Clear interface
     $('#restartButton').hide();    
+    //
+    Game.markerPoint = 100;
     // Start
     Game.start();
   },
