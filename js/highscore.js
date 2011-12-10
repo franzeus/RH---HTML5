@@ -13,8 +13,7 @@ var Highscore = {
     Highscore.showScore();
     // Reset markers
     for (var i = 0; i < Highscore.markers.length; i++) {
-      Highscore.markers[i].shape.x = Highscore.markers[i].offset;
-      Highscore.markers[i].shape.endX = Highscore.markers[i].offset;
+      Highscore.markers[i].reset();
     };
   },
 
@@ -62,6 +61,7 @@ var Highscore = {
 var Marker = function(_score, _offset) {
   this.score = _score;
   this.offset = _offset + 200;
+
   this.shape = new Line({
       context: Game.buffer_context,
       startX: this.offset,
@@ -71,13 +71,34 @@ var Marker = function(_score, _offset) {
       endY: Game.HEIGHT,
       lineWidth: 4
   });
+
+  this.box = new Rectangle({
+    context: Game.buffer_context,
+    x: this.offset,
+    y: 0,
+    color: "#004400",
+    width: 80,
+    height: 40
+  });
+  console.log(this.box);
 };
 //
 Marker.prototype.draw = function() {
   this.shape.draw();
+  this.box.draw();
+  Game.buffer_context.font = "10pt Arial";
+  Game.buffer_context.fillStyle = "#FFFFFF";
+  Game.buffer_context.fillText("Highscore", this.shape.x + 5, 30); 
 };
 //
 Marker.prototype.update = function() {
   this.shape.x -= Game.speed;
-  this.shape.endX -= Game.speed;
+  this.shape.endX = this.shape.x;
+  this.box.x = this.shape.x;
+};
+//
+Marker.prototype.reset = function() {
+  this.shape.x = this.offset;
+  this.shape.endX = this.offset;
+  this.box.x = this.offset;
 };
