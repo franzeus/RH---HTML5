@@ -80,7 +80,6 @@ var Marker = function(_score, _offset) {
     width: 80,
     height: 40
   });
-  console.log(this.box);
 };
 //
 Marker.prototype.draw = function() {

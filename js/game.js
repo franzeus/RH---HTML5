@@ -1,7 +1,6 @@
 /*
   @TODO:
     - Obstacles (spiderweb, fire)
-    - Bonus Points    
   @Feature:
     - Highscore with localstorage
     - Improve performance
