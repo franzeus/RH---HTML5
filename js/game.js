@@ -64,8 +64,12 @@ var Game = {
     Player.init();
     // Create Platforms
     PlatformManager.createPlatforms(3);
-
+    //
+    Game.angle = 3;
+    Game.velocity_x = 0;
+    Game.scale_x = Math.cos(Game.angle);
     Game.acceleration = 0.002;
+    //
     Game.markerPoint = 100;
 
     // Events
@@ -97,8 +101,8 @@ var Game = {
    
     if(Game.isDrawing) {
       Game.clear();
-      Highscore.addPoint(1);
-
+      Game.update();
+    
       // ---------
       // Drawing Backgrounds      
       Game.backgrounds.forEach(function(background){
@@ -115,14 +119,21 @@ var Game = {
       Game.checkPlayer();
       Player.draw();
 
-      Game.speed += Game.acceleration;
-      Game.markerPoint -= Game.speed;
       // ---------
       Game.context.drawImage(Game.buffer, 0, 0);
       Game.reqAnimation = requestAnimFrame( Game.draw );
     } else {
       Game.canvasToBW();
     }
+  },
+
+  update : function() {
+      Highscore.addPoint(1);
+      Game.markerPoint -= Game.speed;
+
+      Game.speed += Game.acceleration;
+      Game.velocity_x = Game.speed * Game.scale_x;
+      Game.acc = -Game.velocity_x;      
   },
 
   checkPlayer : function() {

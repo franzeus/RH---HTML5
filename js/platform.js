@@ -33,7 +33,7 @@ var PlatformManager = {
 
   draw : function() {
     PlatformManager.platforms.forEach(function(platform) {
-      platform.shape.x -= Game.speed;
+      platform.shape.x -= Game.acc;//Game.speed;
       platform.draw();
     });
 
