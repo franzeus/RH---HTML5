@@ -109,9 +109,9 @@ Platform.prototype.draw = function() {
 
   // Draw bars
   this.bars.forEach(function(bar, index) {
-    if(bar.x < Game.canvas.width) {
+    if(bar.x < Game.canvas.width)
       bar.draw();
-    }
+      
     bar.x = that.shape.x + (index * bar.width);
     bar.y = that.shape.y;
   });
@@ -147,10 +147,11 @@ Platform.prototype.setItem = function() {
   this.items = [];
 
   var probabilityToHaveItem = PlatformManager.getRandomNum(0 , 10);
+  var randomX = PlatformManager.getRandomNum(5, this.shape.width);
+  var randomY = PlatformManager.getRandomNum(16, this.shape.height);  
   // Add item ?
-  if(probabilityToHaveItem > 8) {
-    var randomX = PlatformManager.getRandomNum(5, this.shape.width);
-    var randomY = PlatformManager.getRandomNum(16, this.shape.height);  
+  if(probabilityToHaveItem > 8)  
     this.items.push(new Goody(this.shape.x, this.shape.y, randomX, randomY));
-  }
+  else if(probabilityToHaveItem < 2)
+    this.items.push(new Spiderweb(this.shape.x, this.shape.y, randomX));
 };

@@ -2,19 +2,61 @@
 // Parent class
 var Item = function(_x, _y, _oX, _oY) {
   this.init(_x, _y, _oX, _oY);
-}
+};
 Item.prototype.init = function(_x, _y, _oX, _oY) {
   this.context = Game.buffer_context;
   this.src = null;
   this.x = _x;
   this.y = _y;
   this.offsetX = _oX;
-  this.offsetY = _oY;
+  this.offsetY = 20;
   this.isVisible = true;
 
   this.platformX = 0;
   this.platformY = 0;
 };
+
+// --------------
+var Spiderweb = function(_x, _y, _oX) {
+  //this.constructor(_x, _y, _oX, _oY);
+  this.context = Game.buffer_context;
+  this.x = _x;
+  this.y = _y;
+  this.offsetX = _oX;
+  this.offsetY = 20;
+  this.isVisible = true;
+
+  this.platformX = 0;
+  this.platformY = 0;
+
+  this.width = '20';
+  this.height = '20';
+  this.src = 'assets/game_obstacle_slow20.png';
+
+  this.shape = new ImageShape({
+    x: this.x, y: this.y,
+    width: this.width, height: this.height,
+    src: this.src,
+    context: this.context
+  });
+};
+//
+Spiderweb.prototype.collide = function() {
+
+};
+//
+Spiderweb.prototype.draw = function() {
+  if(this.isVisible) {
+    this.shape.draw();
+    this.update();
+  }
+};
+//
+Spiderweb.prototype.update = function() {
+  this.shape.x = this.platformX + this.offsetX;
+  this.shape.y = this.platformY - this.offsetY;
+};
+
 
 // --------------
 var Goody = function(_x, _y, _oX, _oY) {
@@ -55,14 +97,16 @@ var Goody = function(_x, _y, _oX, _oY) {
 //
 Goody.prototype.collide = function() {
   this.isVisible = false;
-}
+  Highscore.addPoint(this.points);
+  Highscore.blink();
+};
 //
 Goody.prototype.draw = function() {
   if(this.isVisible) {
     this.shape.draw();
     this.update();
   }
-}
+};
 //
 Goody.prototype.update = function() {
   this.shape.x = this.platformX + Math.cos(this.angle) * this.radX;

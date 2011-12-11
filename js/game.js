@@ -1,6 +1,7 @@
 /*
   @TODO:
     - Obstacles (spiderweb, fire)
+    - Make item as superclass for obstacles
   @Feature:
     - Highscore with localstorage
     - Improve performance
@@ -146,8 +147,6 @@ var Game = {
         if(!item.isVisible) return false;
         if(Game.isColliding(item.shape, Player.shape) ) {
           item.collide();
-          Highscore.addPoint(item.points);
-          Highscore.blink();
         }
       });
 
