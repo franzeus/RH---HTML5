@@ -100,6 +100,7 @@ var Platform = function(_x, _y, _w, _h) {
   this.barHeight = 165;  
   this.setBars();
   //
+  this.itemTypes = ['fire', 'spiderweb', 'goody'];
   this.items = [];
   this.setItem();
 };
@@ -111,7 +112,7 @@ Platform.prototype.draw = function() {
   this.bars.forEach(function(bar, index) {
     if(bar.x < Game.canvas.width)
       bar.draw();
-      
+
     bar.x = that.shape.x + (index * bar.width);
     bar.y = that.shape.y;
   });
@@ -149,9 +150,15 @@ Platform.prototype.setItem = function() {
   var probabilityToHaveItem = PlatformManager.getRandomNum(0 , 10);
   var randomX = PlatformManager.getRandomNum(5, this.shape.width);
   var randomY = PlatformManager.getRandomNum(16, this.shape.height);  
+  var randomItemType = this.itemTypes[PlatformManager.getRandomNum(0, this.itemTypes.length - 1)];
   // Add item ?
-  if(probabilityToHaveItem > 8)  
-    this.items.push(new Goody(this.shape.x, this.shape.y, randomX, randomY));
-  else if(probabilityToHaveItem < 2)
-    this.items.push(new Spiderweb(this.shape.x, this.shape.y, randomX));
+  if(probabilityToHaveItem > 8) {
+    if(randomItemType == 'fire')
+      this.items.push(new Fire(this.shape.x, this.shape.y, randomX));
+    else if(randomItemType == 'spiderweb')
+      this.items.push(new Spiderweb(this.shape.x, this.shape.y, randomX));
+    else
+      this.items.push(new Goody(this.shape.x, this.shape.y, randomX, randomY));
+  }
+
 };

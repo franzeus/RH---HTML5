@@ -2,8 +2,10 @@
   @TODO:
     - Obstacles (spiderweb, fire)
     - Make item as superclass for obstacles
+    - Balancing
   @Feature:
     - Highscore with localstorage
+    - Online Highscore
     - Improve performance
       - Save every possible platform size as image
 */
