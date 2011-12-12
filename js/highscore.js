@@ -5,7 +5,8 @@ var Highscore = {
   markers: new Array(),
 
   init : function() {
-    
+    $('#saveScoreButton').click($.proxy(this.showForm, this));
+    $('#saveButton').click($.proxy(this.pushScoreOnline, this));
   },
 
   reset : function() {
@@ -30,14 +31,21 @@ var Highscore = {
   saveScore : function() {
     // Only save highest score
     if(Highscore.markers.length > 0) {
-      var highscore = Highscore.markers[0];
-      if(highscore.score < Highscore.score) {
+      var hs = Highscore.markers[0];
+      if(hs.score < Highscore.score) {
         Highscore.markers = [];
         Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
       }
     } else {
       Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
     }
+  },
+
+  pushScoreOnline : function() {
+    var nameInput = $('#name');
+    var name = nameInput.val();
+    if(!name) return false;
+    Highscore.hideForm();
   },
 
   drawMarkers : function() {
@@ -50,9 +58,23 @@ var Highscore = {
     });
   },
 
+  showForm : function() {
+    $('#scoreForm').show(600);
+  },
+
+  hideForm : function() {
+    $('#scoreForm').hide();
+  },
+
   blink : function() {
     Highscore.domObj.fadeOut().fadeIn();
-  }
+  },
+
+  hasLocalStorage : function() {
+    if (!window.localStorage)
+      return false
+    return true;
+  },
 };
 
 

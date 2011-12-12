@@ -70,6 +70,7 @@ var Game = {
     Game.scale_x = Math.cos(Game.angle);
     Game.acceleration = 0.002;
     //
+    Highscore.init();
     Game.markerPoint = 100;
 
     // Events
@@ -85,6 +86,7 @@ var Game = {
 
   stop : function() {
     $('#restartButton').show();
+    $('#saveScoreButton').show();
     Game.isDrawing = false;
     Game.speed = 0;
     Player.isVisible = false;
@@ -206,7 +208,9 @@ var Game = {
     PlatformManager.reset();
     Highscore.reset();
     // Clear interface
-    $('#restartButton').hide();    
+    $('#restartButton').hide(); 
+    $('#saveScoreButton').hide();  
+    Highscore.hideForm();
     //
     Game.markerPoint = 100;
     // Start
@@ -235,14 +239,15 @@ var Game = {
   },
   
   keyEvent : function(e) {
-    //console.log(e.keyCode);
+    console.log(e.keyCode);
     // Space = 32
     // ArrowUp = 38
     // R = 82
     switch(e.keyCode) {
       case(38): Player.jump(); break;
       case(32): Player.jump(); break;
-      case(82): if(!Game.isDrawing) Game.reset(); break;
+      case(82): if(!Game.isDrawing && !$('input').is(":focus")) Game.reset(); break;
+      case(83): if(!Game.isDrawing && !$('input').is(":focus")) Highscore.showForm(); break;
     }      
   }
 };

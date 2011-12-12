@@ -95,3 +95,20 @@ canvas {
   position:absolute;
   left:-5px; bottom:120px;
 }
+
+#scoreForm {
+  font-family: 'Luckiest Guy', cursive;
+  width:380px;
+  margin:auto;
+  margin-bottom:2em;
+  display:none;
+}
+
+#scoreForm input {
+  font-family: 'Luckiest Guy', cursive;
+  padding:4px;
+  border:1px solid #000;
+  font-size:1.2em;
+  background:#111;
+  color:#F6F6F6;
+}
