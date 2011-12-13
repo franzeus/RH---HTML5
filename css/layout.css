@@ -1,11 +1,23 @@
 body {  
-	background:#111111;
-  color:#F6F6F6;
+	background:#111 url(../img/game_background_layer_black.png) repeat-x top center;
+  color:#888888;
   font-size:0.8em;
   font-family:Arial;
 }
 
+a, a:visited {
+  color:#999999;
+}
+
+h1 {
+  margin:0;
+}
+
 canvas {
+  /*position:absolute;*/
+  position:relative;
+  left:130px; bottom:10px;
+  background:url(../assets/game_background_layer_3.png);
 }
 
 .rhFont {
@@ -18,15 +30,13 @@ canvas {
   background:url(../assets/score_bg.png) left no-repeat;
   position:absolute;
   width:99px; height:25px;
-  top:20px;
-  left:20px;
+  bottom:245px;
+  left:135px; top:5px;
   z-index:999;
   text-align:center;
   font-size:1.2em;
   padding-top:4px;
 }
-
-
 .button {
   cursor:pointer;
   padding-top:18px;
@@ -37,4 +47,68 @@ canvas {
   z-index:999;
   text-align:center;
   font-size:1.2em;
+}
+#slide-container {
+  margin:auto;
+  position:relative;
+  width:680px;height:auto;
+  overflow:hidden;
+  margin-top:280px;
+  /*background:url(../assets/smartphone.png) left center no-repeat;*/
+}
+.slide-wrapper {
+  overflow:hidden;
+  height:auto;
+  position:relative;
+}
+
+.slide {
+  position:relative;
+  float:left;
+  
+}
+
+#slideInfo {
+  height:280px;
+}
+
+#slideInfo .content {
+  margin:40px 0 0 100px;
+}
+
+#footer {
+  text-align:center;
+  width:600px;
+  margin:auto;
+}
+
+#nextButton, #prevButton  { 
+  cursor:pointer;
+  position:absolute;
+}
+
+#nextButton {
+  right:0px; bottom:80px;
+}
+
+#prevButton {
+  position:absolute;
+  left:-5px; bottom:120px;
+}
+
+#scoreForm {
+  font-family: 'Luckiest Guy', cursive;
+  width:380px;
+  margin:auto;
+  margin-bottom:2em;
+  display:none;
+}
+
+#scoreForm input {
+  font-family: 'Luckiest Guy', cursive;
+  padding:4px;
+  border:1px solid #000;
+  font-size:1.2em;
+  background:#111;
+  color:#F6F6F6;
 }

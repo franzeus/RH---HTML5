@@ -53,10 +53,10 @@ ImageShape = function(_settings) {
 ImageShape.prototype = new Shape();
 //
 ImageShape.prototype.draw = function() {
-  this.canvasContext.save();
-  this.canvasContext.rotate(this.angle * Math.PI  / 180);
+  //this.canvasContext.save();
+  //this.canvasContext.rotate(this.angle * Math.PI  / 180);
   this.canvasContext.drawImage(this.img, this.x, this.y, this.width, this.height);
-  this.canvasContext.restore();
+  //this.canvasContext.restore();
 };
 
 // -------------------------------------------------

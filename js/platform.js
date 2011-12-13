@@ -28,19 +28,21 @@ var PlatformManager = {
 
   reset : function() {
     PlatformManager.platforms = [];
-    PlatformManager.createPlatforms(5);
+    PlatformManager.createPlatforms(3);
   },
 
   draw : function() {
     PlatformManager.platforms.forEach(function(platform) {
+      platform.shape.x -= Game.acc;//Game.speed;
       platform.draw();
-      platform.shape.x -= Game.speed;
     });
 
     PlatformManager.update();
   },
 
   update : function() {
+
+    // Append platform to the last platform
     for(var i=0; i < PlatformManager.platforms.length; i++) {
       if(PlatformManager.platforms[i].shape.x + PlatformManager.platforms[i].shape.width <= 0) {
         PlatformManager.transform(i);
@@ -48,7 +50,7 @@ var PlatformManager = {
     }
   },
 
-  transform : function(_index) {    
+  transform : function(_index) {
     var nextIndex = _index - 1;
     if(_index == 0)
       nextIndex = PlatformManager.platforms.length - 1;
@@ -63,6 +65,7 @@ var PlatformManager = {
     PlatformManager.platforms[_index].shape.height = newH;
     PlatformManager.platforms[_index].shape.y = newY;
     PlatformManager.platforms[_index].setBars();
+    PlatformManager.platforms[_index].setItem();
   },
 
   getRandomNum : function(min, max) {
@@ -79,7 +82,6 @@ var Platform = function(_x, _y, _w, _h) {
   this.context = Game.buffer_context;
   this.width = _w;
   this.height = _h;
-  //this.src = _src;
   this.x = _x;
   this.y = _y;
 
@@ -98,26 +100,29 @@ var Platform = function(_x, _y, _w, _h) {
   this.barHeight = 165;  
   this.setBars();
   //
+  this.itemTypes = ['fire', 'spiderweb', 'goody'];
   this.items = [];
   this.setItem();
 };
 //
 Platform.prototype.draw = function() {
-  //this.shape.draw();
   var that = this;
+
+  // Draw bars
   this.bars.forEach(function(bar, index) {
-    if(bar.x < Game.canvas.width) {
+    if(bar.x < Game.canvas.width)
       bar.draw();
-    }
+
     bar.x = that.shape.x + (index * bar.width);
     bar.y = that.shape.y;
   });
 
+  // Draw items if in viewport
   if(that.shape.x + that.shape.width > 0 && that.shape.x < Game.canvas.width) {
-    this.items.forEach(function(item, ind){
+    this.items.forEach(function(item, ind) {
       item.draw();
-      item.shape.x = that.shape.x + item.offsetX;
-      item.shape.y = that.shape.y - item.offsetY;
+      item.platformX = that.shape.x;
+      item.platformY = that.shape.y;
     });
   }
 };
@@ -140,41 +145,20 @@ Platform.prototype.setBars = function() {
 };
 //
 Platform.prototype.setItem = function() {
-  //this.items = [];
+  this.items = [];
 
-  var probabilityToHaveItem = PlatformManager.getRandomNum(0,10);
+  var probabilityToHaveItem = PlatformManager.getRandomNum(0 , 10);
+  var randomX = PlatformManager.getRandomNum(5, this.shape.width);
+  var randomY = PlatformManager.getRandomNum(16, this.shape.height);  
+  var randomItemType = this.itemTypes[PlatformManager.getRandomNum(0, this.itemTypes.length - 1)];
   // Add item ?
-  //if(probabilityToHaveItem > 0) {
-    console.log(this.shape.x, this.shape.x + this.width)
-    var randomX = PlatformManager.getRandomNum(this.shape.x, this.shape.x + this.width);
-    var randomY = PlatformManager.getRandomNum(16, 30);
-    //console.log(randomX, randomY)
-    this.items.push(new Item(this.shape.x, this.shape.y, randomX, randomY, 16, 16));
-  //}
-};
+  if(probabilityToHaveItem > 8) {
+    if(randomItemType == 'fire')
+      this.items.push(new Fire(this.shape.x, this.shape.y, randomX));
+    else if(randomItemType == 'spiderweb')
+      this.items.push(new Spiderweb(this.shape.x, this.shape.y, randomX));
+    else
+      this.items.push(new Goody(this.shape.x, this.shape.y, randomX, randomY));
+  }
 
-
-// Obstacle or Bonus Item
-var Item = function(_x, _y, _oX, _oY, _w, _h) {
-  this.context = Game.buffer_context;
-  this.width = _w;
-  this.height = _h;
-  this.src = null;
-  this.x = _x;
-  this.y = _y;
-  this.offsetX = _oX;
-  this.offsetY = _oY;
-  console.log(this.offsetX, this.offsetY);
-  this.isVisible = true;
-  //console.log(this.x, this.y)
-  this.shape = new ImageShape({
-    x: this.x, y: this.y,
-    width: this.width, height: this.height,
-    src: 'assets/goody.png',
-    context: this.context
-  });
 };
-Item.prototype.draw = function() {
-  if(this.isVisible)
-    this.shape.draw();
-}

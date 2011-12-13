@@ -2,12 +2,12 @@
 <html class="no-js" lang="en">
 <head>
   <meta charset="utf-8">
-  <title></title>
-  <meta name="description" content="">
+  <title>Runnershigh HTML5</title>
+  <meta name="description" content="Html5 jump and run game.">
   <meta name="author" content="">
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
-  <meta name="viewport" content="width=600,height=330,initial-scale=1">
+  <meta name="viewport" content="width=420,height=240,initial-scale=1">
   <link href='http://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="css/layout.css">
 
@@ -17,22 +17,58 @@
   </script>
 </head>
 <body>
-<canvas id="buffer-canvas" width="480px" height="260px" style="display:none;"></canvas>
-<canvas id="canvas"        width="480px" height="260px">Your browser doesnt know html5 canvas</canvas>
 
+<div id="slide-container">
+  
+  <div class="slide-wrapper">
 
-<div id="highscore" class="rhFont">0</div>
+    <div class="slide">
+      <div id="highscore" class="rhFont"><span id="score"></span></div>
 
-<div id="restartButton" class="button rhFont" style="left:165px;top:100px">Restart</div>
-<div id="saveScoreButton" class="button rhFont" style="left:225px;top:170px">Save Score</div>
+      <canvas id="buffer-canvas" width="420px" height="240px" style="display:none;"></canvas>
+      <canvas id="canvas"        width="420px" height="240px">Y U NO support html5 canvas</canvas>
+      
+      <div id="restartButton" class="button rhFont" style="left:260px;bottom:130px"><u>R</u>estart</div>
+      <div id="saveScoreButton" class="button rhFont" style="left:260px;top:120px"><u>S</u>ave Score</div>
 
-<p>Html5 Version of the Android Game <a href="http://rh.fidrelity.at/" target="_blank">RunnersHigh</a> || Recommended: Chrome.</p>
+      <img src="img/arr_right.png" id="nextButton" class="nextButton">
+    </div>
+
+    <div class="slide" id="slideInfo">
+      <img src="img/arr_left.png" id="prevButton" class="prevButton">
+      <div class="content">
+      <h1 class="rhFont">RunnersHigh</h1>
+      RunnersHigh is actually a jump&amp;run game for Android, which was created by several students of the Fh-Salzburg in 2011. I was interested to rewrite the game in javascript using HTML5 canvas ... just for fun. Some things are still missing like the obstacles. However, the main issue remains the performance.
+
+      <p>The entire code is available at <a href="https://github.com/webarbeit/RH---HTML5" target="_blank">github</a>.
+      <br />
+      <a href="http://www.weberdevelopment.de/" target="_blank">Authors website</a></div>
+      </p>
+      
+    </div>
+
+  </div>
+
+</div>
+<div id="scoreForm">
+Name: <input type="text" size="30" id="name"> <input type="button" id="saveButton" value=" Save ">
+</div>
+
+<div id="footer">
+Html5 Version of the Android Game <a href="http://rh.fidrelity.at/" target="_blank">RunnersHigh</a> || Recommended: Chrome.
+</div>
 
 <script type="text/javascript" src="js/shape.js"></script>
+<script type="text/javascript" src="js/item.js"></script>
 <script type="text/javascript" src="js/parallax.js"></script>
 <script type="text/javascript" src="js/player.js"></script>
 <script type="text/javascript" src="js/platform.js"></script>
 <script type="text/javascript" src="js/highscore.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
+
+<script type="text/javascript" src="js/slider.js"></script>
+<script type="text/javascript">
+  var slider = new SliderDiv();
+</script>
 </body>
 </html>

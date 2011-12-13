@@ -1,10 +1,13 @@
 /*
   @TODO:
     - Obstacles (spiderweb, fire)
-    - Bonus Points    
+    - Make item as superclass for obstacles
+    - Balancing
   @Feature:
     - Highscore with localstorage
+    - Online Highscore
     - Improve performance
+      - Save every possible platform size as image
 */
 //
 window.requestAnimFrame = (function(){
@@ -36,9 +39,10 @@ var Game = {
   buffer: null,
   context: null,
   _canvasContext: null,
-  speed: 2,
+  speed: 4,
   isDrawing: true,
   reqAnimation: null,
+  acceleration: 0,
 
   init : function() {
     Game.canvas = document.getElementById("canvas");
@@ -53,13 +57,21 @@ var Game = {
 
     // Add backgrounds
     Game.backgrounds = [];
-    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
-    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_2.png", 0.1));
-    Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_1.png", 0.15));
+    //Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
+    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_2.png", 0.1));
+    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_1.png", 0.3));
     // Prepare player
     Player.init();
     // Create Platforms
-    PlatformManager.createPlatforms(5);
+    PlatformManager.createPlatforms(3);
+    //
+    Game.angle = 3;
+    Game.velocity_x = 0;
+    Game.scale_x = Math.cos(Game.angle);
+    Game.acceleration = 0.002;
+    //
+    Highscore.init();
+    Game.markerPoint = 100;
 
     // Events
     $(document).keydown($.proxy(Game.keyEvent, this));
@@ -68,33 +80,42 @@ var Game = {
     Game.isDrawing = true;
   },
 
-  start : function() {        
+
+  start : function() {    
+
     Game.draw();
   },
 
   stop : function() {
-    cancelRequestAnimFrame(Game.reqAnimation);
+
     $('#restartButton').show();
+    $('#saveScoreButton').show();
     Game.isDrawing = false;
     Game.speed = 0;
     Player.isVisible = false;
+    cancelRequestAnimFrame(Game.reqAnimation);
+    Highscore.saveScore();
   },
 
   clear : function() {
-    Game.buffer_context.clearRect(0, 0, Game.WIDTH, Game.HEIGHT );
+    Game.buffer.width = Game.buffer.width;
     Game.canvas.width = Game.canvas.width;
   },
 
   draw : function() { 
+   
     if(Game.isDrawing) {
       Game.clear();
-      Highscore.addPoint(1);
-
+      Game.update();
+    
       // ---------
-      // Drawing Backgrounds     
+      // Drawing Backgrounds      
       Game.backgrounds.forEach(function(background){
         background.draw();
       });
+
+      // Markers
+      Highscore.drawMarkers();
 
       // Drawing platforms
       PlatformManager.draw();
@@ -103,12 +124,21 @@ var Game = {
       Game.checkPlayer();
       Player.draw();
 
-      Game.speed += 0.002;
       // ---------
       Game.context.drawImage(Game.buffer, 0, 0);
-
       Game.reqAnimation = requestAnimFrame( Game.draw );
+    } else {
+      Game.canvasToBW();
     }
+  },
+
+  update : function() {
+      Highscore.addPoint(1);
+      Game.markerPoint -= Game.speed;
+
+      Game.speed += Game.acceleration;
+      Game.velocity_x = Game.speed * Game.scale_x;
+      Game.acc = -Game.velocity_x;      
   },
 
   checkPlayer : function() {
@@ -116,7 +146,7 @@ var Game = {
     if(Player.shape.y + Player.shape.height >= Game.HEIGHT) {
       Game.stop();
       return false;
-    }    
+    }
 
     // Check Jump
     if(Player.isJumping || Player.isFalling) 
@@ -129,6 +159,14 @@ var Game = {
         PlatformManager.currentPlatformIndex = ind;
         PlatformManager.nextPlattformIndex = (ind == PlatformManager.platforms.length - 1) ? 0 : ind+1;
       }
+    
+      // Collision with platform item
+      e.items.forEach(function(item) {
+        if(!item.isVisible) return false;
+        if(Game.isColliding(item.shape, Player.shape) ) {
+          item.collide();
+        }
+      });
 
       var nextShape = PlatformManager.platforms[PlatformManager.nextPlattformIndex].shape;
       var currentShape = PlatformManager.platforms[PlatformManager.currentPlatformIndex].shape ;
@@ -180,20 +218,46 @@ var Game = {
     PlatformManager.reset();
     Highscore.reset();
     // Clear interface
-    $('#restartButton').hide();    
+    $('#restartButton').hide(); 
+    $('#saveScoreButton').hide();  
+    Highscore.hideForm();
+    //
+    Game.markerPoint = 100;
     // Start
     Game.start();
   },
+
+  canvasToBW : function () {
+
+    var imgd = Game.buffer_context.getImageData(0, 0, Game.WIDTH, Game.HEIGHT);
+    var pix = imgd.data;
+    for (var i = 0, n = pix.length; i < n; i += 4) {
+      var grayscale = pix[i  ] * .3 + pix[i+1] * .59 + pix[i+2] * .11;
+      pix[i  ] = grayscale;   // red
+      pix[i+1] = grayscale;   // green
+      pix[i+2] = grayscale;   // blue
+      // alpha
+    }
+
+    // Draw Background Rect
+    Game.buffer_context.fillStyle = 'rgb(0,0,0)';
+    Game.buffer_context.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
+    Game.context.drawImage(Game.buffer, 0, 0);
+    
+    Game.buffer_context.putImageData(imgd, 0, 0);
+    Game.context.drawImage(Game.buffer, 0, 0);
+  },
   
   keyEvent : function(e) {
-    //console.log(e.keyCode);
+    console.log(e.keyCode);
     // Space = 32
     // ArrowUp = 38
     // R = 82
     switch(e.keyCode) {
       case(38): Player.jump(); break;
       case(32): Player.jump(); break;
-      case(82): Game.reset(); break;
+      case(82): if(!Game.isDrawing && !$('input').is(":focus")) Game.reset(); break;
+      case(83): if(!Game.isDrawing && !$('input').is(":focus")) Highscore.showForm(); break;
     }      
   }
 };
