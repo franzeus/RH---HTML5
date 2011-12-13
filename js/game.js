@@ -68,17 +68,16 @@ var Game = {
     Game.isDrawing = true;
   },
 
-  start : function() {    
-    Game.reqAnimation = requestAnimFrame( Game.start );
+  start : function() {        
     Game.draw();
   },
 
   stop : function() {
+    cancelRequestAnimFrame(Game.reqAnimation);
     $('#restartButton').show();
     Game.isDrawing = false;
     Game.speed = 0;
     Player.isVisible = false;
-    cancelRequestAnimFrame(Game.reqAnimation);
   },
 
   clear : function() {
@@ -107,6 +106,8 @@ var Game = {
       Game.speed += 0.002;
       // ---------
       Game.context.drawImage(Game.buffer, 0, 0);
+
+      Game.reqAnimation = requestAnimFrame( Game.draw );
     }
   },
 
@@ -137,6 +138,12 @@ var Game = {
           Player.isFalling = true;
           Player.groundY = Game.canvas.height;
         }
+
+        // Fall if jumps against wall
+        if(Player.shape.y + Player.shape.height > nextShape.y && Player.shape.x + Player.shape.width > nextShape.x) {
+          Player.isFalling = true;
+          Player.shape.x -= Game.Speed; //nextShape.x - Player.shape.width;
+        }
       // Player on platform
       } else {
         var platformToCheck;
@@ -148,6 +155,7 @@ var Game = {
 
         if(Player.shape.y + Player.shape.height <= platformToCheck.y )
           Player.groundY = platformToCheck.y
+
       }
     });
   },
