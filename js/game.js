@@ -1,11 +1,9 @@
 /*
   @TODO:
-    - Obstacles (spiderweb, fire)
     - Make item as superclass for obstacles
     - Balancing
   @Feature:
     - Highscore with localstorage
-    - Online Highscore
     - Improve performance
       - Save every possible platform size as image
 */
@@ -31,7 +29,6 @@ window.cancelRequestAnimFrame = ( function() {
 } )();
 
 var Game = {
-
   drawInterval: null,
   blocks: [],
   player: [],
@@ -39,10 +36,13 @@ var Game = {
   buffer: null,
   context: null,
   _canvasContext: null,
-  speed: 4,
+  speed: 2,
+  initSpeed : 2,
+  initMarkerPoint : 200,
   isDrawing: true,
   reqAnimation: null,
   acceleration: 0,
+  MAX_SPEED: 7,
 
   init : function() {
     Game.canvas = document.getElementById("canvas");
@@ -69,9 +69,13 @@ var Game = {
     Game.velocity_x = 0;
     Game.scale_x = Math.cos(Game.angle);
     Game.acceleration = 0.002;
+
+    Game.speed = Game.initSpeed;
     //
     Highscore.init();
-    Game.markerPoint = 100;
+    Game.markerPoint = Game.initMarkerPoint;
+    
+    Highscore.pullScoreOnline();
 
     // Events
     $(document).keydown($.proxy(Game.keyEvent, this));
@@ -99,7 +103,7 @@ var Game = {
     Game.canvas.width = Game.canvas.width;
   },
 
-  draw : function() { 
+  draw : function() {
    
     if(Game.isDrawing) {
       Game.clear();
@@ -117,8 +121,7 @@ var Game = {
       // Drawing platforms
       PlatformManager.draw();
 
-      // Player
-      Game.checkPlayer();
+      // Player      
       Player.draw();
 
       // ---------
@@ -133,9 +136,12 @@ var Game = {
       Highscore.addPoint(1);
       Game.markerPoint -= Game.speed;
 
-      Game.speed += Game.acceleration;
+      if(Game.speed < Game.MAX_SPEED)
+        Game.speed += Game.acceleration;      
       Game.velocity_x = Game.speed * Game.scale_x;
-      Game.acc = -Game.velocity_x;      
+      Game.acc = -Game.velocity_x;
+      
+      Game.checkPlayer();   
   },
 
   checkPlayer : function() {
@@ -146,11 +152,14 @@ var Game = {
     }
 
     // Check Jump
-    if(Player.isJumping || Player.isFalling) 
+    if(Player.isJumping || Player.isFalling)
       Player.checkJump();
 
     // Check collision with platforms
-    PlatformManager.platforms.forEach(function(e, ind) {
+    for (var i = PlatformManager.platforms.length - 1; i >= 0; i--) {
+      var e = PlatformManager.platforms[i];
+      var ind = i;
+    
       // Current shape after player
       if(e.shape.x < Player.x) {
         PlatformManager.currentPlatformIndex = ind;
@@ -185,7 +194,7 @@ var Game = {
         if(Player.shape.y + Player.shape.height <= platformToCheck.y )
           Player.groundY = platformToCheck.y
       }
-    });
+    }
   },
 
   isColliding : function(obj1, obj2) {
@@ -202,7 +211,7 @@ var Game = {
     // Reset game object
     Game.clear();
     Game.isDrawing = true;
-    Game.speed = 2;
+    Game.speed = Game.initSpeed;
     // Reset objects
     Player.reset();
     PlatformManager.reset();
@@ -212,7 +221,8 @@ var Game = {
     $('#saveScoreButton').hide();  
     Highscore.hideForm();
     //
-    Game.markerPoint = 100;
+    Game.markerPoint = Game.initMarkerPoint;
+    Highscore.pullScoreOnline();
     // Start
     Game.start();
   },
@@ -238,13 +248,14 @@ var Game = {
     Game.context.drawImage(Game.buffer, 0, 0);
   },
   
+  //
   keyEvent : function(e) {
-    console.log(e.keyCode);
+    //console.log(e.keyCode);
     // Space = 32
     // ArrowUp = 38
     // R = 82
     switch(e.keyCode) {
-      case(38): Player.jump(); break;
+      case(38): !Game.isDrawing ? Game.reset() : Player.jump(); break;
       case(32): Player.jump(); break;
       case(82): if(!Game.isDrawing && !$('input').is(":focus")) Game.reset(); break;
       case(83): if(!Game.isDrawing && !$('input').is(":focus")) Highscore.showForm(); break;
