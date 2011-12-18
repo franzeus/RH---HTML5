@@ -84,11 +84,14 @@ var Game = {
     Game.isDrawing = true;
   },
 
+
   start : function() {    
+
     Game.draw();
   },
 
   stop : function() {
+
     $('#restartButton').show();
     $('#saveScoreButton').show();
     Game.isDrawing = false;
@@ -182,6 +185,12 @@ var Game = {
           Player.isFalling = true;
           Player.groundY = Game.canvas.height;
         }
+
+        // Fall if jumps against wall
+        if(Player.shape.y + Player.shape.height > nextShape.y && Player.shape.x + Player.shape.width > nextShape.x) {
+          Player.isFalling = true;
+          Player.shape.x -= Game.Speed; //nextShape.x - Player.shape.width;
+        }
       // Player on platform
       } else {
         var platformToCheck;
@@ -193,6 +202,7 @@ var Game = {
 
         if(Player.shape.y + Player.shape.height <= platformToCheck.y )
           Player.groundY = platformToCheck.y
+
       }
     }
   },
