@@ -1,8 +1,11 @@
 var PlatformManager = {
 
   platforms: [],
+
   randomWidth: [96, 144, 192, 256, 304],
-  randomHeight: [20, 40, 60, 80, 100],
+  //randomWidth:  [80, 160, 240, 320],
+  randomHeight: [20, 40, 60, 80],
+
   GAP: 90,
   currentPlatformIndex: 0,
   nextPlattformIndex: 1,
@@ -40,19 +43,17 @@ var PlatformManager = {
   update : function() {
     // Append platform to the last platform
     for(var i=0; i < PlatformManager.platforms.length; i++) {
-      if(PlatformManager.platforms[i].shape.x + PlatformManager.platforms[i].shape.width <= 0) {
+      if(PlatformManager.platforms[i].shape.x + PlatformManager.platforms[i].shape.width < 0) {
         PlatformManager.transform(i);
       }
     }
   },
 
-  transform : function(_index) {
-    var nextIndex = _index - 1;
-    if(_index == 0)
-      nextIndex = PlatformManager.platforms.length - 1;
+  transform : function(_index) {    
+    var nextIndex = _index == 0 ? PlatformManager.platforms.length - 1 : _index - 1;
 
     newW = PlatformManager.randomWidth[PlatformManager.getRandomNum(0, PlatformManager.randomWidth.length - 1)];
-    newH = PlatformManager.randomHeight[PlatformManager.getRandomNum(0, PlatformManager.randomHeight.length - 1)];  
+    newH = PlatformManager.randomHeight[PlatformManager.getRandomNum(0, PlatformManager.randomHeight.length - 1)];
     newX = PlatformManager.platforms[nextIndex].shape.x + PlatformManager.platforms[nextIndex].shape.width + PlatformManager.GAP;
     newY = Game.HEIGHT - newH;
 
@@ -93,7 +94,7 @@ var Platform = function(_x, _y, _w, _h) {
   // Bar
   this.bars = [];
   this.barWidth = 16; 
-  this.barHeight = 165;  
+  this.barHeight = 100;
   this.setBars();
   //
   this.itemTypes = ['fire', 'spiderweb', 'goody'];
@@ -115,7 +116,7 @@ Platform.prototype.draw = function() {
     bar.y = that.shape.y;
   }
 
-  // Draw items if in viewport
+  // Draw items
   if(that.shape.x + that.shape.width > 0 && that.shape.x < Game.canvas.width) {
     for (var i = this.items.length - 1; i >= 0; i--) {
       var item = this.items[i];    
@@ -130,12 +131,12 @@ Platform.prototype.setBars = function() {
   this.bars = [];
   this.numberOfBars = Math.round(this.shape.width / this.barWidth);
 
-  for(var i=0; i <= this.numberOfBars; i++) {
+  for(var i = 0; i < this.numberOfBars; i++) {
     var bar = new ImageShape({
       context: this.context,
       width: this.barWidth,
       height: this.barHeight,
-      src: 'assets/bar.png',
+      src: 'assets/bar_100.png',
       x: 0,
       y: this.shape.y
     });

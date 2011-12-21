@@ -55,15 +55,20 @@ var Game = {
     Game.buffer.width = Game.canvas.width;
     Game.buffer.height = Game.canvas.height;
 
+    // Preload
+    var iBar = new Image(); 
+    iBar.src = 'assets/bars_80.png';
+    iBar.src = 'assets/game_background_layer_2.png';
+    iBar.src = 'assets/game_background_layer_1.png';
+
     // Add backgrounds
     Game.backgrounds = [];
-    //Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
     Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_2.png", 0.1));
     Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_1.png", 0.3));
     // Prepare player
     Player.init();
     // Create Platforms
-    PlatformManager.createPlatforms(3);
+    PlatformManager.createPlatforms(4);
     //
     Game.angle = 3;
     Game.velocity_x = 0;
@@ -178,7 +183,7 @@ var Game = {
       });
 
       var nextShape = PlatformManager.platforms[PlatformManager.nextPlattformIndex].shape;
-      var currentShape = PlatformManager.platforms[PlatformManager.currentPlatformIndex].shape ;
+      var currentShape = PlatformManager.platforms[PlatformManager.currentPlatformIndex].shape;
       // Player in gap
       if(Player.shape.x > (currentShape.x + currentShape.width + 5) && (Player.shape.x + Player.shape.width) < (nextShape.x) )  {
         if(!Player.isJumping) {
