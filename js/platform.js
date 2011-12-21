@@ -25,7 +25,7 @@ var PlatformManager = {
 
   reset : function() {
     PlatformManager.platforms = [];
-    PlatformManager.createPlatforms(3);
+    PlatformManager.createPlatforms(Game.numberOfPlatforms);
   },
 
   draw : function() {

@@ -43,6 +43,7 @@ var Game = {
   reqAnimation: null,
   acceleration: 0,
   MAX_SPEED: 7,
+  numberOfPlatforms: 4,
 
   init : function() {
     Game.canvas = document.getElementById("canvas");
@@ -63,7 +64,7 @@ var Game = {
     // Prepare player
     Player.init();
     // Create Platforms
-    PlatformManager.createPlatforms(4);
+    PlatformManager.createPlatforms(Game.numberOfPlatforms);
     //
     Game.angle = 3;
     Game.velocity_x = 0;
