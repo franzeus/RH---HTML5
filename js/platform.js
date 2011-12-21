@@ -6,7 +6,7 @@ var PlatformManager = {
   //randomWidth:  [80, 160, 240, 320],
   randomHeight: [20, 40, 60, 80],
 
-  GAP: 90,
+  GAP: 80,
   currentPlatformIndex: 0,
   nextPlattformIndex: 1,
 
@@ -28,7 +28,7 @@ var PlatformManager = {
 
   reset : function() {
     PlatformManager.platforms = [];
-    PlatformManager.createPlatforms(3);
+    PlatformManager.createPlatforms(Game.numberOfPlatforms);
   },
 
   draw : function() {

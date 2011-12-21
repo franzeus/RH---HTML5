@@ -37,12 +37,13 @@ var Game = {
   context: null,
   _canvasContext: null,
   speed: 2,
-  initSpeed : 2,
+  initSpeed : 5,
   initMarkerPoint : 200,
   isDrawing: true,
   reqAnimation: null,
   acceleration: 0,
   MAX_SPEED: 7,
+  numberOfPlatforms: 4,
 
   init : function() {
     Game.canvas = document.getElementById("canvas");
@@ -63,12 +64,15 @@ var Game = {
 
     // Add backgrounds
     Game.backgrounds = [];
-    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_2.png", 0.1));
-    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_1.png", 0.3));
+
+    //Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
+    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_2.png", 0.1));
+    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_1.png", 0.3));
     // Prepare player
     Player.init();
     // Create Platforms
-    PlatformManager.createPlatforms(4);
+    PlatformManager.createPlatforms(Game.numberOfPlatforms);
+
     //
     Game.angle = 3;
     Game.velocity_x = 0;

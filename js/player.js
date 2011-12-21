@@ -22,7 +22,7 @@ var Player = {
     Player.y = Game.HEIGHT - Player.height - 60;
     Player.groundY = Game.HEIGHT;
     Player.jumpSinWaveSpeed = Player.halfPI / Player.jumpHangTime;
-    Player.velocityMax = 5;
+    Player.velocityMax = 9;
 
     Player.shape = new ImageSprite({
       x: Player.x, y: Player.y,
@@ -54,11 +54,11 @@ var Player = {
     if(Player.isJumping || Player.isFalling && !isFire) return false;
     
     // Set default values
-    Player.velocityMax = 5;
+    Player.velocityMax = 9;
     Player.maxJumpHeight = 80;
 
     if(isFire) {
-      Player.velocityMax = 5;
+      Player.velocityMax = 12;
       Player.maxJumpHeight = 130;
     }
 

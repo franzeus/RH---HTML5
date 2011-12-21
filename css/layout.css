@@ -14,9 +14,9 @@ h1 {
 }
 
 canvas {
-  /*position:absolute;*/
+  /*position:absolute; */
   position:relative;
-  left:100px; bottom:10px;
+  left:70px; bottom:0px;
   background:url(../assets/game_background_layer_3.png);
 }
 
@@ -31,7 +31,7 @@ canvas {
   position:absolute;
   width:99px; height:25px;
   bottom:245px;
-  left:115px; top:5px;
+  left:75px; top:5px;
   z-index:999;
   text-align:center;
   font-size:1.2em;
@@ -51,9 +51,9 @@ canvas {
 #slide-container {
   margin:auto;
   position:relative;
-  width:680px;height:auto;
+  width:780px; height:auto;
   overflow:hidden;
-  margin-top:280px;
+  margin-top:190px;
   /*background:url(../assets/smartphone.png) left center no-repeat;*/
 }
 .slide-wrapper {
@@ -65,7 +65,6 @@ canvas {
 .slide {
   position:relative;
   float:left;
-  
 }
 
 #slideInfo {
@@ -88,7 +87,7 @@ canvas {
 }
 
 #nextButton {
-  right:0px; bottom:80px;
+  right:-22px; bottom:120px;
 }
 
 #prevButton {
