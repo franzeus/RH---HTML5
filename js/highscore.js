@@ -30,30 +30,65 @@ var Highscore = {
 
   saveScore : function() {
     // Only save highest score
-    if(Highscore.markers.length > 0) {
-      var hs = Highscore.markers[0];
-      if(hs.score < Highscore.score) {
-        Highscore.markers = [];
-        Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
-      }
-    } else {
-      Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
-    }
+    Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
   },
 
   pushScoreOnline : function() {
     var nameInput = $('#name');
     var name = nameInput.val();
     if(!name) return false;
+    var browser = jQuery.uaMatch(navigator.userAgent).browser;
+    //
+    $.ajax({
+      type: 'POST',
+      url: 'post/savescore.php',
+      data: { name: name, score: Highscore.score, browser: browser, offset: Game.markerPoint },
+    });
+    //
     Highscore.hideForm();
+    Highscore.pullScoreOnline();
   },
 
+  pullScoreOnline : function () {
+    Highscore.markers = [];
+    $('#hs-list').html('');
+    //
+    $.getJSON('post/get_score.php', function(data) {
+      $.each(data, function(key, val) {
+        Highscore.addScoreToList(val, key);
+      });
+    });
+  },
+
+  addScoreToList : function(score, place) {
+    var fontClass = "";
+    switch(place) {
+      case(0) : fontClass = "first"; break;
+      case(1) : fontClass = "second"; break;
+      case(2) : fontClass = "third"; break;
+    }
+
+    var item = '<li class="'+fontClass+'">';
+    item += '<span class="hsName">' + score.name + '</span>';
+    item += '<span class="hsScore">' + score.score + '</span>';
+    item += '</li>';
+    
+    // push top 3 to game
+    if(Highscore.markers.length < 3)
+      Highscore.markers.push(new Marker(score.score, Math.abs(score.offset), score.name));
+    
+    $('#hs-list').append(item);
+  },
+
+  //
   drawMarkers : function() {
     Highscore.markers.forEach(function(marker) {
-      if(marker.shape.x > 0) {
-        if(marker.shape.x < Game.WIDTH)
-          marker.draw();      
-        marker.update();
+      if(Highscore.score + Player.x > marker.score) {   
+        if(marker.shape.x > 0) {
+          if(marker.shape.x < Game.WIDTH)
+            marker.draw();
+          marker.update();
+        }
       }
     });
   },
@@ -77,12 +112,13 @@ var Highscore = {
   },
 };
 
-
 // ---------------------------------
 // Marker Class
-var Marker = function(_score, _offset) {
+var Marker = function(_score, _offset, _label) {
   this.score = _score;
-  this.offset = _offset + 200;
+  //this.offset = _offset + 200;
+  this.offset = Game.WIDTH;
+  this.label = _label || "Highscore";
 
   this.shape = new Line({
       context: Game.buffer_context,
@@ -109,7 +145,7 @@ Marker.prototype.draw = function() {
   this.box.draw();
   Game.buffer_context.font = "10pt Arial";
   Game.buffer_context.fillStyle = "#FFFFFF";
-  Game.buffer_context.fillText("Highscore", this.shape.x + 5, 30); 
+  Game.buffer_context.fillText(this.label, this.shape.x + 5, 30); 
 };
 //
 Marker.prototype.update = function() {

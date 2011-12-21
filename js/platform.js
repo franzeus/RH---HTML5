@@ -7,9 +7,6 @@ var PlatformManager = {
   currentPlatformIndex: 0,
   nextPlattformIndex: 1,
 
-  init : function() {
-  },
-
   createPlatforms : function(_num) {
     var pm = PlatformManager;
     var newX, newY, newH, newW;
@@ -32,16 +29,15 @@ var PlatformManager = {
   },
 
   draw : function() {
-    PlatformManager.platforms.forEach(function(platform) {
-      platform.shape.x -= Game.acc;//Game.speed;
+    for (var i = PlatformManager.platforms.length - 1; i >= 0; i--) {
+      var platform = PlatformManager.platforms[i];
+      platform.shape.x -= Game.acc;
       platform.draw();
-    });
-
+    };
     PlatformManager.update();
   },
 
   update : function() {
-
     // Append platform to the last platform
     for(var i=0; i < PlatformManager.platforms.length; i++) {
       if(PlatformManager.platforms[i].shape.x + PlatformManager.platforms[i].shape.width <= 0) {
@@ -109,21 +105,24 @@ Platform.prototype.draw = function() {
   var that = this;
 
   // Draw bars
-  this.bars.forEach(function(bar, index) {
+  for (var i = this.bars.length - 1; i >= 0; i--) {
+    var bar = this.bars[i];
+
     if(bar.x < Game.canvas.width)
       bar.draw();
 
-    bar.x = that.shape.x + (index * bar.width);
+    bar.x = that.shape.x + (i * bar.width);
     bar.y = that.shape.y;
-  });
+  }
 
   // Draw items if in viewport
   if(that.shape.x + that.shape.width > 0 && that.shape.x < Game.canvas.width) {
-    this.items.forEach(function(item, ind) {
+    for (var i = this.items.length - 1; i >= 0; i--) {
+      var item = this.items[i];    
       item.draw();
       item.platformX = that.shape.x;
       item.platformY = that.shape.y;
-    });
+    }
   }
 };
 //
@@ -160,5 +159,4 @@ Platform.prototype.setItem = function() {
     else
       this.items.push(new Goody(this.shape.x, this.shape.y, randomX, randomY));
   }
-
 };

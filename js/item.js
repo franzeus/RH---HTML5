@@ -15,7 +15,6 @@ Item.prototype.init = function(_x, _y, _oX, _oY) {
   this.platformX = 0;
   this.platformY = 0;
 };
-
 // --------------
 var Spiderweb = function(_x, _y, _oX) {
   //this.constructor(_x, _y, _oX, _oY);
@@ -39,10 +38,16 @@ var Spiderweb = function(_x, _y, _oX) {
     src: this.src,
     context: this.context
   });
+  this.type = 'spiderweb';
+  this.activated = false;
 };
 //
 Spiderweb.prototype.collide = function() {
-
+  if(!this.activated) {
+    this.activated = true;
+    if(Game.speed > Game.initSpeed + 1)
+      Game.speed -= Game.speed * 20 / 100;
+  }
 };
 //
 Spiderweb.prototype.draw = function() {
@@ -82,10 +87,12 @@ var Fire = function(_x, _y, _oX) {
     context: this.context,
     frames: 3
   });
+
+  this.type = 'fire';
 };
 //
 Fire.prototype.collide = function() {
-
+  Player.jump(true);
 };
 //
 Fire.prototype.draw = function() {
@@ -134,6 +141,7 @@ var Goody = function(_x, _y, _oX, _oY) {
     context: this.context
   });
 
+  this.type = 'goody';
   this.points = 200;
 };
 //Goody.prototype = new Item();
