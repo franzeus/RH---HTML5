@@ -58,8 +58,8 @@ var Game = {
     // Add backgrounds
     Game.backgrounds = [];
     //Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
-    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_2.png", 0.1));
-    Game.backgrounds.push(new Parallax(0, 0, 480, 240, "assets/game_background_layer_1.png", 0.3));
+    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_2.png", 0.1));
+    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_1.png", 0.3));
     // Prepare player
     Player.init();
     // Create Platforms
