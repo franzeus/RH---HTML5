@@ -14,6 +14,8 @@ var Player = {
   maxJumpHeight: 80,
   velocity: 0,
   reachedPeak: false,
+  initVelocityMax: 5,
+  initMaxJumpHeight: 80,
   velocityDownfallSpeed: 4,
   velocityMax: 0,
 
@@ -22,7 +24,8 @@ var Player = {
     Player.y = Game.HEIGHT - Player.height - 60;
     Player.groundY = Game.HEIGHT;
     Player.jumpSinWaveSpeed = Player.halfPI / Player.jumpHangTime;
-    Player.velocityMax = 9;
+    Player.velocityMax = Player.initVelocityMax;
+    Player.maxJumpHeight = Player.initMaxJumpHeight;
 
     Player.shape = new ImageSprite({
       x: Player.x, y: Player.y,
@@ -54,11 +57,11 @@ var Player = {
     if(Player.isJumping || Player.isFalling && !isFire) return false;
     
     // Set default values
-    Player.velocityMax = 9;
-    Player.maxJumpHeight = 80;
+    Player.velocityMax = Player.initVelocityMax;
+    Player.maxJumpHeight = Player.initMaxJumpHeight;
 
     if(isFire) {
-      Player.velocityMax = 12;
+      Player.velocityMax = 6;
       Player.maxJumpHeight = 130;
     }
 
@@ -71,7 +74,7 @@ var Player = {
     // Player jumps
     if(Player.isJumping && !Player.reachedPeak) {
      
-      Player.velocity -= 12.5 * (Player.maxJumpHeight - (Player.shape.y - Player.lastY)) / 10; //12.5 * (Player.maxJumpHeight - (Player.shape.y - Player.lastY)) / 10;
+      Player.velocity -= 12.5 * (Player.maxJumpHeight - (Player.shape.y - Player.lastY)) / 10;
 
       if(Player.shape.y <= Player.lastY - Player.maxJumpHeight) {
         Player.reachedPeak = true;

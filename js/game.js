@@ -1,5 +1,7 @@
 /*
   @TODO:
+    - Check framerate
+    - Refactor HS-Class
     - Make item as superclass for obstacles
     - Balancing
   @Feature:
@@ -36,15 +38,20 @@ var Game = {
   buffer: null,
   context: null,
   _canvasContext: null,
-  speed: 2,
-  initSpeed : 5,
+  // ---------------
+  initSpeed : 2,
   initMarkerPoint : 200,
   isDrawing: true,
   reqAnimation: null,
-  acceleration: 0,
-  MAX_SPEED: 7,
+  acceleration: 0.004,
+  MAX_SPEED: 10,
   numberOfPlatforms: 4,
-
+  // ---------------
+  lastTime : 0,
+  gameTick : null,
+  prevElapsed : 0,
+  prevElapsed2 : 0,
+  
   init : function() {
     Game.canvas = document.getElementById("canvas");
     Game.buffer = document.getElementById("buffer-canvas");
@@ -57,15 +64,13 @@ var Game = {
     Game.buffer.height = Game.canvas.height;
 
     // Preload
-    var iBar = new Image(); 
+    var iBar = new Image();
     iBar.src = 'assets/bars_80.png';
     iBar.src = 'assets/game_background_layer_2.png';
     iBar.src = 'assets/game_background_layer_1.png';
 
     // Add backgrounds
     Game.backgrounds = [];
-
-    //Game.backgrounds.push(new Parallax(0, 0, 660, 330, "assets/game_background_layer_3.png", 0.01));
     Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_2.png", 0.1));
     Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_1.png", 0.3));
     // Prepare player
@@ -77,13 +82,11 @@ var Game = {
     Game.angle = 3;
     Game.velocity_x = 0;
     Game.scale_x = Math.cos(Game.angle);
-    Game.acceleration = 0.002;
 
     Game.speed = Game.initSpeed;
     //
     Highscore.init();
     Game.markerPoint = Game.initMarkerPoint;
-    
     Highscore.pullScoreOnline();
 
     // Events
@@ -94,19 +97,18 @@ var Game = {
   },
 
 
-  start : function() {    
-
-    Game.draw();
+  start : function() {
+    Game.run(Game.draw);
   },
 
   stop : function() {
-
     $('#restartButton').show();
     $('#saveScoreButton').show();
     Game.isDrawing = false;
     Game.speed = 0;
     Player.isVisible = false;
-    cancelRequestAnimFrame(Game.reqAnimation);
+    Game.run(null);
+    //cancelRequestAnimFrame(Game.reqAnimation);
     Highscore.saveScore();
   },
 
@@ -115,14 +117,13 @@ var Game = {
     Game.canvas.width = Game.canvas.width;
   },
 
-  draw : function() {
-   
+  draw : function(elapsed) {
     if(Game.isDrawing) {
       Game.clear();
-      Game.update();
+      Game.update(elapsed);
     
       // ---------
-      // Drawing Backgrounds      
+      // Drawing Backgrounds
       Game.backgrounds.forEach(function(background){
         background.draw();
       });
@@ -137,23 +138,61 @@ var Game = {
       Player.draw();
 
       // ---------
-      Game.context.drawImage(Game.buffer, 0, 0);
-      Game.reqAnimation = requestAnimFrame( Game.draw );
+      Game.context.drawImage(Game.buffer, 0, 0);    
     } else {
       Game.canvasToBW();
     }
   },
 
-  update : function() {
+  update : function(elapsed) {
       Highscore.addPoint(1);
-      Game.markerPoint -= Game.speed;
 
       if(Game.speed < Game.MAX_SPEED)
         Game.speed += Game.acceleration;      
       Game.velocity_x = Game.speed * Game.scale_x;
       Game.acc = -Game.velocity_x;
-      
+
+      Game.markerPoint -= Game.acc;      
       Game.checkPlayer();   
+  },
+
+  tick : function () {
+    if (Game.gameTick != null) {
+      requestAnimFrame(function() { Game.tick(); } );
+    }
+    else {
+      Game.lastTime = 0;
+      return;
+    }
+    var timeNow = Date.now();
+    var elapsed = timeNow - Game.lastTime;
+    if (elapsed > 0)
+    {
+      if (Game.lastTime != 0)
+      {
+        if (elapsed > 1000) // Cap max elapsed time to 1 second to avoid death spiral
+          elapsed = 1000;
+        // Hackish fps smoothing
+        var smoothElapsed = (elapsed + Game.prevElapsed + Game.prevElapsed2)/3;
+        Game.gameTick(0.001*smoothElapsed);
+        Game.prevElapsed2 = Game.prevElapsed;
+        Game.prevElapsed = elapsed;
+      }
+      Game.lastTime = timeNow;
+    }
+  },
+
+  run : function(gameTick) {
+    var prevTick = Game.gameTick;
+    Game.gameTick = gameTick;
+    if (this.lastTime == 0)
+    {
+      // Once started, the loop never stops.
+      // But this function is called to change tick functions.
+      // Avoid requesting multiple frames per frame.
+      requestAnimFrame(function() { Game.tick(); } );
+      Game.lastTime = 0;
+    }
   },
 
   checkPlayer : function() {
@@ -167,6 +206,7 @@ var Game = {
     if(Player.isJumping || Player.isFalling)
       Player.checkJump();
 
+    // -----------------------------------------
     // Check collision with platforms
     for (var i = PlatformManager.platforms.length - 1; i >= 0; i--) {
       var e = PlatformManager.platforms[i];
@@ -214,6 +254,7 @@ var Game = {
 
       }
     }
+    // -----------------------------------------
   },
 
   isColliding : function(obj1, obj2) {
@@ -247,7 +288,6 @@ var Game = {
   },
 
   canvasToBW : function () {
-
     var imgd = Game.buffer_context.getImageData(0, 0, Game.WIDTH, Game.HEIGHT);
     var pix = imgd.data;
     for (var i = 0, n = pix.length; i < n; i += 4) {
@@ -257,12 +297,10 @@ var Game = {
       pix[i+2] = grayscale;   // blue
       // alpha
     }
-
     // Draw Background Rect
     Game.buffer_context.fillStyle = 'rgb(0,0,0)';
     Game.buffer_context.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
-    Game.context.drawImage(Game.buffer, 0, 0);
-    
+    Game.context.drawImage(Game.buffer, 0, 0);    
     Game.buffer_context.putImageData(imgd, 0, 0);
     Game.context.drawImage(Game.buffer, 0, 0);
   },
@@ -281,6 +319,5 @@ var Game = {
     }      
   }
 };
-
 Game.init();
 Game.start();
