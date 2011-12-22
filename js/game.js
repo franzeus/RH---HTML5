@@ -8,6 +8,9 @@
     - Highscore with localstorage
     - Improve performance
       - Save every possible platform size as image
+
+  See:
+    http://www.iguanademos.com/Jare/docs/html5/Lessons/Lesson2/
 */
 //
 window.requestAnimFrame = (function(){
