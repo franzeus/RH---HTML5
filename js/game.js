@@ -42,19 +42,21 @@ var Game = {
   context: null,
   _canvasContext: null,
   // ---------------
-  initSpeed : 2,
+  initSpeed : 100,
   initMarkerPoint : 200,
   isDrawing: true,
   reqAnimation: null,
-  acceleration: 0.004,
-  MAX_SPEED: 10,
+  acceleration: 0.2,
+  MAX_SPEED: 300,
   numberOfPlatforms: 4,
   // ---------------
+  elapsed : 0,
+  /*
   lastTime : 0,
   gameTick : null,
   prevElapsed : 0,
   prevElapsed2 : 0,
-  
+  */
   init : function() {
     Game.canvas = document.getElementById("canvas");
     Game.buffer = document.getElementById("buffer-canvas");
@@ -74,8 +76,8 @@ var Game = {
 
     // Add backgrounds
     Game.backgrounds = [];
-    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_2.png", 0.1));
-    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_1.png", 0.3));
+    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_2.png", 20));
+    Game.backgrounds.push(new Parallax(0, 0, 620, 330, "assets/game_background_layer_1.png", 40));
     // Prepare player
     Player.init();
     // Create Platforms
@@ -101,7 +103,10 @@ var Game = {
 
 
   start : function() {
-    Game.run(Game.draw);
+    //Game.run(Game.draw);
+
+    Game.then = Date.now();
+    Game.rate();
   },
 
   stop : function() {
@@ -110,7 +115,7 @@ var Game = {
     Game.isDrawing = false;
     Game.speed = 0;
     Player.isVisible = false;
-    Game.run(null);
+    //Game.run(null);
     //cancelRequestAnimFrame(Game.reqAnimation);
     Highscore.saveScore();
   },
@@ -123,7 +128,6 @@ var Game = {
   draw : function(elapsed) {
     if(Game.isDrawing) {
       Game.clear();
-      Game.update(elapsed);
     
       // ---------
       // Drawing Backgrounds
@@ -147,56 +151,32 @@ var Game = {
     }
   },
 
-  update : function(elapsed) {
-      Highscore.addPoint(1);
+  update : function(elapsed) {     
+    Game.elapsed = elapsed;
+    if(Game.speed < Game.MAX_SPEED)
+      Game.speed += Game.acceleration; 
+    Game.acc = Game.speed * elapsed;
+    
+    //Game.acc = Game.velocity_x;
 
-      if(Game.speed < Game.MAX_SPEED)
-        Game.speed += Game.acceleration;      
-      Game.velocity_x = Game.speed * Game.scale_x;
-      Game.acc = -Game.velocity_x;
+    Game.markerPoint -= Game.acc;
+    Game.checkPlayer();   
 
-      Game.markerPoint -= Game.acc;      
-      Game.checkPlayer();   
+    if(elapsed < 1) elapsed = 1;
+    Highscore.addPoint(Math.abs(elapsed));
+
   },
 
-  tick : function () {
-    if (Game.gameTick != null) {
-      requestAnimFrame(function() { Game.tick(); } );
-    }
-    else {
-      Game.lastTime = 0;
-      return;
-    }
-    var timeNow = Date.now();
-    var elapsed = timeNow - Game.lastTime;
-    if (elapsed > 0)
-    {
-      if (Game.lastTime != 0)
-      {
-        if (elapsed > 1000) // Cap max elapsed time to 1 second to avoid death spiral
-          elapsed = 1000;
-        // Hackish fps smoothing
-        var smoothElapsed = (elapsed + Game.prevElapsed + Game.prevElapsed2)/3;
-        Game.gameTick(0.001*smoothElapsed);
-        Game.prevElapsed2 = Game.prevElapsed;
-        Game.prevElapsed = elapsed;
-      }
-      Game.lastTime = timeNow;
-    }
-  },
+  rate : function() {
+    var now = Date.now();
+    var delta = now - Game.then;
 
-  run : function(gameTick) {
-    var prevTick = Game.gameTick;
-    Game.gameTick = gameTick;
-    if (this.lastTime == 0)
-    {
-      // Once started, the loop never stops.
-      // But this function is called to change tick functions.
-      // Avoid requesting multiple frames per frame.
-      requestAnimFrame(function() { Game.tick(); } );
-      Game.lastTime = 0;
-    }
-  },
+    Game.update(delta / 1000);
+    Game.draw();
+
+    Game.then = now;
+    requestAnimFrame(function() { Game.rate(); } );
+  }, 
 
   checkPlayer : function() {
     // Player fell in gap

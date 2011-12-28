@@ -16,7 +16,7 @@ var Player = {
   reachedPeak: false,
   initVelocityMax: 5,
   initMaxJumpHeight: 80,
-  velocityDownfallSpeed: 4,
+  velocityDownfallSpeed: 9,
   velocityMax: 0,
 
   init : function() {
@@ -74,7 +74,7 @@ var Player = {
     // Player jumps
     if(Player.isJumping && !Player.reachedPeak) {
      
-      Player.velocity -= 12.5 * (Player.maxJumpHeight - (Player.shape.y - Player.lastY)) / 10;
+      Player.velocity -= 12.5 * (Player.maxJumpHeight - (Player.shape.y - Player.lastY)) / 100;
 
       if(Player.shape.y <= Player.lastY - Player.maxJumpHeight) {
         Player.reachedPeak = true;

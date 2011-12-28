@@ -29,7 +29,7 @@ Parallax.prototype.draw = function() {
 };
 //
 Parallax.prototype.update = function(i) {
-	this.plains[i].x -= this.moveSpeed * Game.speed;
+	this.plains[i].x -= this.moveSpeed * Game.elapsed; //this.moveSpeed * Game.speed;
 
 	if(this.plains[i].x + this.plains[i].width <= 0) {
 		this.plains[i].x = i == 0 

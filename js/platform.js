@@ -148,7 +148,7 @@ Platform.prototype.setItem = function() {
   this.items = [];
 
   var probabilityToHaveItem = PlatformManager.getRandomNum(0 , 10);
-  var randomX = PlatformManager.getRandomNum(5, this.shape.width);
+  var randomX = PlatformManager.getRandomNum(5, this.shape.width - 16);
   var randomY = PlatformManager.getRandomNum(16, this.shape.height);  
   var randomItemType = this.itemTypes[PlatformManager.getRandomNum(0, this.itemTypes.length - 1)];
   // Add item ?
