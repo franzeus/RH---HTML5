@@ -8,9 +8,6 @@
     - Highscore with localstorage
     - Improve performance
       - Save every possible platform size as image
-
-  See:
-    http://www.iguanademos.com/Jare/docs/html5/Lessons/Lesson2/
 */
 //
 window.requestAnimFrame = (function(){
@@ -47,16 +44,11 @@ var Game = {
   isDrawing: true,
   reqAnimation: null,
   acceleration: 0.2,
-  MAX_SPEED: 300,
+  MAX_SPEED: 400,
   numberOfPlatforms: 4,
   // ---------------
   elapsed : 0,
-  /*
-  lastTime : 0,
-  gameTick : null,
-  prevElapsed : 0,
-  prevElapsed2 : 0,
-  */
+
   init : function() {
     Game.canvas = document.getElementById("canvas");
     Game.buffer = document.getElementById("buffer-canvas");
@@ -83,11 +75,6 @@ var Game = {
     // Create Platforms
     PlatformManager.createPlatforms(Game.numberOfPlatforms);
 
-    //
-    Game.angle = 3;
-    Game.velocity_x = 0;
-    Game.scale_x = Math.cos(Game.angle);
-
     Game.speed = Game.initSpeed;
     //
     Highscore.init();
@@ -95,12 +82,13 @@ var Game = {
     Highscore.pullScoreOnline();
 
     // Events
+    Game.slider = new SliderDiv();
     $(document).keydown($.proxy(Game.keyEvent, this));
-    $('#canvas').click(function(){ Player.jump() });
-    $('#restartButton').click(function(){ Game.reset() });
+    $('#canvas').click(function(){ Player.jump(); });
+    $('#restartButton').click(function(){ Game.reset(); });
+    $('#infoButton').click(function(){ Game.showInfo(); });
     Game.isDrawing = true;
   },
-
 
   start : function() {
     Game.then = Date.now();
@@ -110,11 +98,33 @@ var Game = {
   stop : function() {
     $('#restartButton').show();
     $('#saveScoreButton').show();
+    $('#infoButton').show();
     Player.isVisible = false;
     Game.isDrawing = false;
     Game.speed = 0;
     cancelRequestAnimFrame(Game.reqAnimation);
     Highscore.saveScore();
+  },
+
+  reset : function() {
+    // Reset game object
+    Game.clear();
+    Game.isDrawing = true;
+    Game.speed = Game.initSpeed;
+    // Reset objects
+    Player.reset();
+    PlatformManager.reset();
+    Highscore.reset();
+    // Clear interface
+    $('#restartButton').hide();
+    $('#saveScoreButton').hide();
+    $('#infoButton').hide();
+    Highscore.hideForm();
+    //
+    Game.markerPoint = Game.initMarkerPoint;
+    Highscore.pullScoreOnline();
+    // Start
+    Game.start();
   },
 
   clear : function() {
@@ -148,7 +158,7 @@ var Game = {
     }
   },
 
-  update : function(elapsed) {     
+  update : function(elapsed) {
     Game.elapsed = elapsed;
     if(Game.speed < Game.MAX_SPEED)
       Game.speed += Game.acceleration; 
@@ -159,7 +169,6 @@ var Game = {
 
     if(elapsed < 1) elapsed = 1;
     Highscore.addPoint(Math.abs(elapsed));
-
   },
 
   rate : function() {
@@ -173,10 +182,10 @@ var Game = {
       Game.then = now;
       Game.reqAnimation = requestAnimFrame(function() { Game.rate(); } );
     }
-  }, 
+  },
 
   checkPlayer : function() {
-    // Player fell in gap
+    // Player didnt mind the gap
     if(Player.shape.y + Player.shape.height >= Game.HEIGHT) {
       Game.stop();
       return false;
@@ -218,7 +227,7 @@ var Game = {
         // Fall if jumps against wall
         if(Player.shape.y + Player.shape.height > nextShape.y && Player.shape.x + Player.shape.width > nextShape.x) {
           Player.isFalling = true;
-          Player.shape.x -= Game.Speed; //nextShape.x - Player.shape.width;
+          Player.shape.x -= Game.Speed;
         }
       // Player on platform
       } else {
@@ -237,6 +246,10 @@ var Game = {
     // -----------------------------------------
   },
 
+  showInfo : function() {
+    Game.slider.moveTo(2);
+  },
+
   isColliding : function(obj1, obj2) {
   if( obj1.x > obj2.x &&
       obj1.x < (obj2.x + obj2.width) &&
@@ -247,34 +260,14 @@ var Game = {
     return false;
   },
 
-  reset : function() {
-    // Reset game object
-    Game.clear();
-    Game.isDrawing = true;
-    Game.speed = Game.initSpeed;
-    // Reset objects
-    Player.reset();
-    PlatformManager.reset();
-    Highscore.reset();
-    // Clear interface
-    $('#restartButton').hide();
-    $('#saveScoreButton').hide();
-    Highscore.hideForm();
-    //
-    Game.markerPoint = Game.initMarkerPoint;
-    Highscore.pullScoreOnline();
-    // Start
-    Game.start();
-  },
-
   canvasToBW : function () {
     var imgd = Game.buffer_context.getImageData(0, 0, Game.WIDTH, Game.HEIGHT);
     var pix = imgd.data;
     for (var i = 0, n = pix.length; i < n; i += 4) {
       var grayscale = pix[i  ] * .3 + pix[i+1] * .59 + pix[i+2] * .11;
-      pix[i  ] = grayscale;   // red
-      pix[i+1] = grayscale;   // green
-      pix[i+2] = grayscale;   // blue
+      pix[i  ] = grayscale;   // r
+      pix[i+1] = grayscale;   // g
+      pix[i+2] = grayscale;   // b
       // alpha
     }
     // Draw Background Rect
@@ -287,15 +280,16 @@ var Game = {
   
   //
   keyEvent : function(e) {
-    //console.log(e.keyCode);
+    console.log(e.keyCode);
     // Space = 32
     // ArrowUp = 38
-    // R = 82
+    // R = 82  S = 83  I = 73
     switch(e.keyCode) {
       case(38): !Game.isDrawing ? Game.reset() : Player.jump(); break;
       case(32): Player.jump(); break;
       case(82): if(!Game.isDrawing && !$('input').is(":focus")) Game.reset(); break;
       case(83): if(!Game.isDrawing && !$('input').is(":focus")) Highscore.showForm(); break;
+      case(73): if(!Game.isDrawing && !$('input').is(":focus")) Game.showInfo(); break;
     }      
   }
 };

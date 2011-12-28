@@ -54,7 +54,6 @@ canvas {
   width:780px; height:auto;
   overflow:hidden;
   margin-top:190px;
-  /*background:url(../assets/smartphone.png) left center no-repeat;*/
 }
 .slide-wrapper {
   overflow:hidden;
@@ -79,6 +78,7 @@ canvas {
   text-align:center;
   width:600px;
   margin:auto;
+  margin-top:4em;
 }
 
 #nextButton, #prevButton, #nextButtonHs, #prevButtonHs  { 

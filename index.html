@@ -31,8 +31,9 @@
       <canvas id="buffer-canvas" width="620px" height="330px" style="display:none;"></canvas>
       <canvas id="canvas"        width="620px" height="330px">Y U NO support html5 canvas</canvas>
       
-      <div id="restartButton" class="button rhFont" style="left:290px;bottom:150px"><u>R</u>estart</div>
-      <div id="saveScoreButton" class="button rhFont" style="left:290px;bottom:100px"><u>S</u>ave Score</div>
+      <div id="restartButton" class="button rhFont" style="left:290px;bottom:180px"><u>R</u>estart</div>
+      <div id="saveScoreButton" class="button rhFont" style="left:290px;bottom:130px"><u>S</u>ave Score</div>
+      <div id="infoButton" class="button rhFont" style="left:290px;bottom:80px"><u>I</u>nfo</div>
 
       <img src="img/arr_right.png" id="nextButton" class="nextButton">
     </div>
@@ -72,14 +73,18 @@ Name: <input type="text" size="30" id="name"> <input type="button" id="saveButto
 <div id="footer">
 <p>Press <span class="key">  Spacebar  </span> or <span class="key">  Arrow-Up  </span> to jump.</p>
 
-Html5 Version of the Android Game <a href="http://rh.fidrelity.at/" target="_blank">RunnersHigh</a>.<br /> I recommend Chrome with <a href="http://www.gaslampmedia.com/blog/how-enable-gpu-acceleration-chrome" target="_blank">activated GPU acceleration</a>.
-
 <p><img src="img/goody.png"> 200+ <img src="img/fire.png"> Jump higher <img src="img/spiderweb.png"> Slow down </p>
 
+Html5 Version of the Android Game <a href="http://rh.fidrelity.at/" target="_blank">RunnersHigh</a>.<br /> I recommend Chrome with <a href="http://www.gaslampmedia.com/blog/how-enable-gpu-acceleration-chrome" target="_blank">activated GPU acceleration</a>.
+
+
+<p>
 <g:plusone size="small"></g:plusone>
+<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-hashtags="rhhtml5">Tweet</a>
+</p>
 </div>
 
-
+<script type="text/javascript" src="js/slider.js"></script>
 <script type="text/javascript" src="js/shape.js"></script>
 <script type="text/javascript" src="js/item.js"></script>
 <script type="text/javascript" src="js/parallax.js"></script>
@@ -88,9 +93,9 @@ Html5 Version of the Android Game <a href="http://rh.fidrelity.at/" target="_bla
 <script type="text/javascript" src="js/highscore.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
 
-<script type="text/javascript" src="js/slider.js"></script>
+
 <script type="text/javascript">
-  var slider = new SliderDiv();
+  //var slider = new SliderDiv();
 </script>
 
 <script type="text/javascript">
@@ -112,6 +117,8 @@ Html5 Version of the Android Game <a href="http://rh.fidrelity.at/" target="_bla
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
   })();
 </script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
 </body>
 </html>

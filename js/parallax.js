@@ -12,8 +12,8 @@ var Parallax = function(_x, _y, _w, _h, _src, _moveSpeed) {
 	this.plains = [];
 	var newX = this.x;
 	var numOfShapes = Math.max( Math.round( (Game.WIDTH * 2) / this.width ), 2);
-	console.log(numOfShapes)
-	for(var i=0; i < numOfShapes; i++) {
+
+	for(var i=0; i <= numOfShapes-1; i++) { // -1 is hardcoded!
 		this.plains.push(new ImageShape({ x: newX, y: this.y, src: this.src, context: this.context, width: this.width, height:this.height }));
 		newX += this.width; 
 	}
