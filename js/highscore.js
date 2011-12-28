@@ -12,14 +12,16 @@ var Highscore = {
   reset : function() {
     Highscore.score = 0;
     Highscore.showScore();
+    Highscore.hideForm();
     // Reset markers
     for (var i = 0; i < Highscore.markers.length; i++) {
       Highscore.markers[i].reset();
     };
+    Highscore.pullScoreOnline();
   },
 
   addPoint : function(_value) {
-    if(!_value) return false;
+    if(!_value || _value < 0) return false;
     Highscore.score += _value;
     Highscore.showScore();
   },
@@ -28,11 +30,7 @@ var Highscore = {
     Highscore.scoreDom.html(Highscore.score);
   },
 
-  saveScore : function() {
-    // Only save highest score
-    Highscore.markers.push(new Marker(Highscore.score, Math.abs(Game.markerPoint)));
-  },
-
+  // Save score in db
   pushScoreOnline : function() {
     var nameInput = $('#name');
     var name = nameInput.val();
@@ -56,6 +54,9 @@ var Highscore = {
     $.getJSON('post/get_score.php', function(data) {
       $.each(data, function(key, val) {
         Highscore.addScoreToList(val, key);
+        // push top 3 to game
+        if(key < 3)
+          Highscore.addMarker(val.score, val.offset, val.name);
       });
     });
   },
@@ -73,16 +74,19 @@ var Highscore = {
     item += '<span class="hsScore">' + score.score + '</span>';
     item += '</li>';
     
-    // push top 3 to game
-    if(Highscore.markers.length < 3)
-      Highscore.markers.push(new Marker(score.score, Math.abs(score.offset), score.name));
-    
     $('#hs-list').append(item);
+  },
+
+  addMarker : function(score, offset, name) {
+    Highscore.markers.push(new Marker(score, Math.abs(offset), name));
+    console.log(Highscore.markers.length)
   },
 
   //
   drawMarkers : function() {
-    Highscore.markers.forEach(function(marker) {
+    Game.buffer_context.font = "10pt Arial";
+    for (var i = Highscore.markers.length - 1; i >= 0; i--) {
+      var marker = Highscore.markers[i];
       if(Highscore.score + Player.x > marker.score) {   
         if(marker.shape.x > 0) {
           if(marker.shape.x < Game.WIDTH)
@@ -90,7 +94,7 @@ var Highscore = {
           marker.update();
         }
       }
-    });
+    };
   },
 
   showForm : function() {
@@ -110,52 +114,4 @@ var Highscore = {
       return false
     return true;
   },
-};
-
-// ---------------------------------
-// Marker Class
-var Marker = function(_score, _offset, _label) {
-  this.score = _score;
-  //this.offset = _offset + 200;
-  this.offset = Game.WIDTH;
-  this.label = _label || "Highscore";
-
-  this.shape = new Line({
-      context: Game.buffer_context,
-      startX: this.offset,
-      startY: 0,
-      color: "#004400",
-      endX: this.offset,
-      endY: Game.HEIGHT,
-      lineWidth: 4
-  });
-
-  this.box = new Rectangle({
-    context: Game.buffer_context,
-    x: this.offset,
-    y: 0,
-    color: "#004400",
-    width: 80,
-    height: 40
-  });
-};
-//
-Marker.prototype.draw = function() {
-  this.shape.draw();
-  this.box.draw();
-  Game.buffer_context.font = "10pt Arial";
-  Game.buffer_context.fillStyle = "#FFFFFF";
-  Game.buffer_context.fillText(this.label, this.shape.x + 5, 30); 
-};
-//
-Marker.prototype.update = function() {
-  this.shape.x -= Game.acc;
-  this.shape.endX = this.shape.x;
-  this.box.x = this.shape.x;
-};
-//
-Marker.prototype.reset = function() {
-  this.shape.x = this.offset;
-  this.shape.endX = this.offset;
-  this.box.x = this.offset;
 };

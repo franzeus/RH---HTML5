@@ -17,8 +17,11 @@ canvas {
   /*position:absolute; */
   position:relative;
   left:70px; bottom:0px;
-  background:url(../assets/game_background_layer_3.png);
+  background:url(../assets/game_loading.jpg);
+
 }
+
+.canvasGameBackground { background:url(../assets/game_background_layer_3.png); }
 
 .rhFont {
   font-family: 'Luckiest Guy', cursive;
@@ -29,6 +32,7 @@ canvas {
 #highscore {
   background:url(../assets/score_bg.png) left no-repeat;
   position:absolute;
+  display:none;
   width:99px; height:25px;
   bottom:245px;
   left:75px; top:5px;
@@ -145,3 +149,10 @@ span.hsScore { float:right; }
   border:1px solid #CCC;
   margin-right:4px;
 }
+
+RunnersHigh is a jump&run game based on the equal named Android game. Help the hungry dinosaur to get as far as possible by jumping from platform to platform. Increase your points 200+ by eating a goody. Encounter fire, which lets you jump higher - or a spider web, which slows the hungry dinosaur down.
+
+
+The entire (and newest) code can be found on Github: https://github.com/webarbeit/RH---HTML5
+
+I was interested in how easy it is to port the Android game to HTML5 canvas. Although it is my first game and the performance isn't the best, I am still surprised about how fast one can code a game in Javascript.

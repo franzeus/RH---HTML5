@@ -5,6 +5,8 @@
     - Make item as superclass for obstacles
     - Balancing
   @Feature:
+    - Preload Images
+    - start screen
     - Highscore with localstorage
     - Improve performance
       - Save every possible platform size as image
@@ -82,6 +84,7 @@ var Game = {
     Highscore.pullScoreOnline();
 
     // Events
+    $('#restartButton').show();
     Game.slider = new SliderDiv();
     $(document).keydown($.proxy(Game.keyEvent, this));
     $('#canvas').click(function(){ Player.jump(); });
@@ -91,6 +94,8 @@ var Game = {
   },
 
   start : function() {
+    $('#canvas').addClass('canvasGameBackground');
+    $('#highscore').show();
     Game.then = Date.now();
     Game.rate();
   },
@@ -103,7 +108,6 @@ var Game = {
     Game.isDrawing = false;
     Game.speed = 0;
     cancelRequestAnimFrame(Game.reqAnimation);
-    Highscore.saveScore();
   },
 
   reset : function() {
@@ -119,11 +123,9 @@ var Game = {
     $('#restartButton').hide();
     $('#saveScoreButton').hide();
     $('#infoButton').hide();
-    Highscore.hideForm();
     //
     Game.markerPoint = Game.initMarkerPoint;
-    Highscore.pullScoreOnline();
-    // Start
+    //
     Game.start();
   },
 
@@ -280,9 +282,8 @@ var Game = {
   
   //
   keyEvent : function(e) {
-    console.log(e.keyCode);
-    // Space = 32
-    // ArrowUp = 38
+    //console.log(e.keyCode);
+    // Space = 32 ArrowUp = 38
     // R = 82  S = 83  I = 73
     switch(e.keyCode) {
       case(38): !Game.isDrawing ? Game.reset() : Player.jump(); break;
@@ -294,4 +295,4 @@ var Game = {
   }
 };
 Game.init();
-Game.start();
+//Game.start();

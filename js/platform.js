@@ -146,6 +146,7 @@ Platform.prototype.setBars = function() {
 //
 Platform.prototype.setItem = function() {
   this.items = [];
+  if(Highscore.score < 500) return false;
 
   var probabilityToHaveItem = PlatformManager.getRandomNum(0 , 10);
   var randomX = PlatformManager.getRandomNum(5, this.shape.width - 16);
