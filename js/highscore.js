@@ -149,7 +149,7 @@ Marker.prototype.draw = function() {
 };
 //
 Marker.prototype.update = function() {
-  this.shape.x -= Game.speed;
+  this.shape.x -= Game.acc;
   this.shape.endX = this.shape.x;
   this.box.x = this.shape.x;
 };

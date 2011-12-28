@@ -70,7 +70,7 @@ var Game = {
 
     // Preload
     var iBar = new Image();
-    iBar.src = 'assets/bars_80.png';
+    iBar.src = 'assets/bar_100.png';
     iBar.src = 'assets/game_background_layer_2.png';
     iBar.src = 'assets/game_background_layer_1.png';
 
@@ -103,8 +103,6 @@ var Game = {
 
 
   start : function() {
-    //Game.run(Game.draw);
-
     Game.then = Date.now();
     Game.rate();
   },
@@ -112,11 +110,10 @@ var Game = {
   stop : function() {
     $('#restartButton').show();
     $('#saveScoreButton').show();
+    Player.isVisible = false;
     Game.isDrawing = false;
     Game.speed = 0;
-    Player.isVisible = false;
-    //Game.run(null);
-    //cancelRequestAnimFrame(Game.reqAnimation);
+    cancelRequestAnimFrame(Game.reqAnimation);
     Highscore.saveScore();
   },
 
@@ -125,12 +122,12 @@ var Game = {
     Game.canvas.width = Game.canvas.width;
   },
 
-  draw : function(elapsed) {
+  draw : function() {
     if(Game.isDrawing) {
       Game.clear();
     
       // ---------
-      // Drawing Backgrounds
+      // Backgrounds
       Game.backgrounds.forEach(function(background){
         background.draw();
       });
@@ -138,7 +135,7 @@ var Game = {
       // Markers
       Highscore.drawMarkers();
 
-      // Drawing platforms
+      // Platforms
       PlatformManager.draw();
 
       // Player      
@@ -157,8 +154,6 @@ var Game = {
       Game.speed += Game.acceleration; 
     Game.acc = Game.speed * elapsed;
     
-    //Game.acc = Game.velocity_x;
-
     Game.markerPoint -= Game.acc;
     Game.checkPlayer();   
 
@@ -168,14 +163,16 @@ var Game = {
   },
 
   rate : function() {
-    var now = Date.now();
-    var delta = now - Game.then;
+    if(Game.isDrawing) {
+      var now = Date.now();
+      var delta = now - Game.then;
 
-    Game.update(delta / 1000);
-    Game.draw();
-
-    Game.then = now;
-    requestAnimFrame(function() { Game.rate(); } );
+      Game.update(delta / 1000);
+      Game.draw();
+     
+      Game.then = now;
+      Game.reqAnimation = requestAnimFrame(function() { Game.rate(); } );
+    }
   }, 
 
   checkPlayer : function() {
@@ -260,8 +257,8 @@ var Game = {
     PlatformManager.reset();
     Highscore.reset();
     // Clear interface
-    $('#restartButton').hide(); 
-    $('#saveScoreButton').hide();  
+    $('#restartButton').hide();
+    $('#saveScoreButton').hide();
     Highscore.hideForm();
     //
     Game.markerPoint = Game.initMarkerPoint;
